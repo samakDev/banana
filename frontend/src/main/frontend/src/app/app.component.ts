@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { MenuComponent } from './components/menu/menu.component';
-import { TranslateService } from '@ngx-translate/core';
+import {Component} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +14,5 @@ export class AppComponent {
     const browserLang = translateService.getBrowserLang();
     translateService.use(browserLang.match(/en|fr/) ? browserLang : 'en');
   }
-
 
 }

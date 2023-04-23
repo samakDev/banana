@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { PlushService } from '../../services/plush.service';
-import { PlushState } from '../../models/plush-state';
-import { Plush } from '../../models/plush';
-import { User } from '../../models/user';
-import { LocalStorageService } from 'angular-2-local-storage';
-import { ContextService } from '../../services/context.service';
+import {Component, OnInit} from '@angular/core';
+import {PlushService} from '../../services/plush.service';
+import {PlushState} from '../../models/plush-state';
+import {Plush} from '../../models/plush';
+import {User} from '../../models/user';
+import {LocalStorageService} from 'angular-2-local-storage';
+import {ContextService} from '../../services/context.service';
 
 @Component({
   selector: 'app-plush',
@@ -15,19 +15,19 @@ export class PlushComponent implements OnInit {
 
   memberName: String = '';
   memberId: String = '';
-  plushs: Array<PlushState> = new Array();
+  plushs: Array<PlushState> = [];
   isFullScreen: Boolean = false;
   isValid: Boolean = false;
+
   constructor(private plushService: PlushService,
-    private localStorageService: LocalStorageService,
-    private contextService: ContextService) {
+              private localStorageService: LocalStorageService,
+              private contextService: ContextService) {
     this.memberName = localStorageService.get<string>('memberName');
     this.memberId = localStorageService.get<string>('memberId');
     if (this.memberName != null && this.memberName !== '') {
       this.isValid = true;
     }
   }
-
 
   ngOnInit() {
     this.plushService.getPlushs().subscribe(plush => this.addOrReplace(plush), e => console.error(e));
@@ -36,6 +36,7 @@ export class PlushComponent implements OnInit {
 
   private addOrReplace(plush: PlushState): void {
     const index = this.plushs.findIndex(s => s.plush.id === plush.plush.id);
+
     if (index !== -1) {
       this.plushs[index] = plush;
     } else {
@@ -50,8 +51,8 @@ export class PlushComponent implements OnInit {
       this.localStorageService.set('memberId', this.memberId);
       this.isValid = true;
     } else {
-      this.localStorageService.set('memberName',null);
-      this.localStorageService.set('memberId',null);
+      this.localStorageService.set('memberName', null);
+      this.localStorageService.set('memberId', null);
       this.isValid = false;
     }
   }

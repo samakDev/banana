@@ -4,25 +4,20 @@ import {FormsModule} from '@angular/forms';
 import {ChartModule} from 'angular2-highcharts';
 import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {AppComponent} from './app.component';
-import {MenuComponent} from './components/menu/menu.component';
-import {RouterModule, Routes} from '@angular/router';
-import {TextfieldCellComponent} from './ui/textfield-cell/textfield-cell.component';
-import {ComboboxCellComponent} from './ui/combobox-cell/combobox-cell.component';
-import {DatepickerCellComponent} from './ui/datepicker-cell/datepicker-cell.component';
-import {ActionCellComponent} from './ui/action-cell/action-cell.component';
-import {DatepickerInputComponent} from './ui/datepicker-input/datepicker-input.component';
-import {ContextService} from './services/context.service';
-import {PlushService} from './services/plush.service';
 import {HighchartsStatic} from 'angular2-highcharts/dist/HighchartsService';
-import {PlushComponent} from './components/plush/plush.component';
+import {RouterModule, Routes} from '@angular/router';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {LocalStorageModule, LocalStorageService} from 'angular-2-local-storage';
 import {HotkeyModule} from 'angular2-hotkeys';
-import {SettingsComponent} from './components/settings/settings.component';
 import {StompConfig, StompService} from '@stomp/ng2-stompjs';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {AppComponent} from './app.component';
+import {MenuComponent} from './components/menu/menu.component';
+import {PlushComponent} from './components/plush/plush.component';
+import {SettingsComponent} from './components/settings/settings.component';
+import {ContextService} from './services/context.service';
+import {PlushService} from './services/plush.service';
 
 declare var require: any;
 
@@ -79,11 +74,6 @@ export function highchartsFactory() {
   declarations: [
     AppComponent,
     MenuComponent,
-    TextfieldCellComponent,
-    ComboboxCellComponent,
-    DatepickerCellComponent,
-    ActionCellComponent,
-    DatepickerInputComponent,
     PlushComponent,
     SettingsComponent
   ],
@@ -115,7 +105,7 @@ export function highchartsFactory() {
     {
       provide: HighchartsStatic,
       useFactory: highchartsFactory
-    }, //
+    },
     StompService,
     {
       provide: StompConfig,

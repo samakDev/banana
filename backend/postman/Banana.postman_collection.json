@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "8f32bef9-0612-425a-9a3c-21cc4be7c1df",
+		"name": "Banana",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "takePlush",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/plush/{{plush_id}}/take/{{user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"plush",
+						"{{plush_id}}",
+						"take",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "releasePlush",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/plush/{{plush_id}}/release/{{user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"plush",
+						"{{plush_id}}",
+						"release",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "statusPlush",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/plush/{{plush_id}}/status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"plush",
+						"{{plush_id}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
