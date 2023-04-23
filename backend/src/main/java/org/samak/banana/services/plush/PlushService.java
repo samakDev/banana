@@ -8,10 +8,8 @@ import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
@@ -22,12 +20,8 @@ public class PlushService implements IPlushService {
     private final Map<String, PlushState> plushStates = new HashMap<>();
     private final Subject<PlushState> stateSubject = PublishSubject.create();
 
-    @Autowired
-    private IPlushConfig plushConfig;
-
-    @PostConstruct
-    private void init() {
-        LOGGER.info("init Plush : {}", plushConfig);
+    public PlushService(final IPlushConfig plushConfig) {
+        LOGGER.info("Plush Service Constructor : {}", plushConfig);
 
         plushConfig.getPlushs()
                 .forEach(p -> {

@@ -5,37 +5,33 @@ import org.samak.banana.services.plush.IPlushService;
 import org.samak.banana.utils.RxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
-
 
 @Controller
 public class PlushBroker {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(PlushBroker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlushBroker.class);
 
-    @Autowired
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
+    private final IPlushService plushService;
 
-    @Autowired
-    private IPlushService plushService;
-
-    public PlushBroker() {
+    public PlushBroker(final IPlushService plushService, final SimpMessagingTemplate template) {
+        this.plushService = plushService;
+        this.template = template;
     }
 
-    @PostConstruct
     private void init() {
-        plushService.getStream().subscribe(state -> {
-            LOGGER.info("Send state : {}", state);
-            template.convertAndSend("/plush/states", Arrays.asList(state));
-        }, RxUtils.logError(LOGGER));
+        plushService.getStream()
+                .subscribe(state -> {
+                    LOGGER.info("Send state : {}", state);
+                    template.convertAndSend("/plush/states", Arrays.asList(state));
+                }, RxUtils.logError(LOGGER));
     }
 
     @SubscribeMapping("/plush/states")

@@ -1,28 +1,23 @@
 package org.samak.banana.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.List;
 
-
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
     public static final String TOPIC_PREFIX = "/plush";
     public static final String ENDPOINT_PREFIX = "/websocket";
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
@@ -40,7 +35,7 @@ public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfig
         resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
 
         final MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setObjectMapper(objectMapper);
+        converter.setObjectMapper(new ObjectMapper());
         converter.setContentTypeResolver(resolver);
 
         messageConverters.add(converter);
