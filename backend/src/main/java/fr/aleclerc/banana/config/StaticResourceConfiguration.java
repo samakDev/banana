@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class StaticResourceConfiguration implements WebMvcConfigurer {
 
 
-    private static final String[] ROUTER = {"/sprints", "/stories", "/plush", "/graph"};
+    private static final String[] ROUTER = {"/sprints", "/stories", "/plush"};
 
 
     @Override

@@ -6,7 +6,6 @@ import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AppComponent} from './app.component';
 import {MenuComponent} from './components/menu/menu.component';
-import {GraphComponent} from './components/graph/graph.component';
 import {RouterModule, Routes} from '@angular/router';
 import {TextfieldCellComponent} from './ui/textfield-cell/textfield-cell.component';
 import {ComboboxCellComponent} from './ui/combobox-cell/combobox-cell.component';
@@ -29,7 +28,6 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 declare var require: any;
 
 const appRoutes: Routes = [
-  {path: 'graph', component: GraphComponent},
   {path: 'plush', component: PlushComponent},
   {path: 'settings', component: SettingsComponent},
   {path: 'jira/project', component: JiraProjectComponent},
@@ -83,7 +81,6 @@ export function highchartsFactory() {
   declarations: [
     AppComponent,
     MenuComponent,
-    GraphComponent,
     TextfieldCellComponent,
     ComboboxCellComponent,
     DatepickerCellComponent,
