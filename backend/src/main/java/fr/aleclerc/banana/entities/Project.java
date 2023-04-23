@@ -34,9 +34,6 @@ public class Project implements Serializable  {
 	@ManyToMany
 	private List<Member> members;
 	
-	@OneToMany(mappedBy="project")
-	private List<Release> release;
-
 	public UUID getId() {
 		return id;
 	}
@@ -69,14 +66,6 @@ public class Project implements Serializable  {
 
 	public void setJiraId(String jiraId) {
 		this.jiraId = jiraId;
-	}
-
-	public List<Release> getRelease() {
-		return release;
-	}
-
-	public void setRelease(List<Release> release) {
-		this.release = release;
 	}
 
 	@Override

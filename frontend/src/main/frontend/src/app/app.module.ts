@@ -1,42 +1,39 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ChartModule } from 'angular2-highcharts';
-import { HttpModule, Http } from '@angular/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AppComponent } from './app.component';
-import { MenuComponent } from './components/menu/menu.component';
-import { GraphComponent } from './components/graph/graph.component';
-import { RouterModule, Routes } from '@angular/router';
-import { TextfieldCellComponent } from './ui/textfield-cell/textfield-cell.component';
-import { ComboboxCellComponent } from './ui/combobox-cell/combobox-cell.component';
-import { DatepickerCellComponent } from './ui/datepicker-cell/datepicker-cell.component';
-import { ActionCellComponent } from './ui/action-cell/action-cell.component';
-import { DatepickerInputComponent } from './ui/datepicker-input/datepicker-input.component';
-import { ReleaseService } from './services/release.service';
-import { ReleasesComponent } from './components/releases/releases.component';
-import { NewReleaseComponent } from './components/new-release/new-release.component';
-import { ContextService } from './services/context.service';
-import { PlushService } from './services/plush.service';
-import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
-import { PlushComponent } from './components/plush/plush.component';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage';
-import { HotkeyModule } from 'angular2-hotkeys';
-import { SettingsComponent } from './components/settings/settings.component';
-import { JiraProjectComponent } from './components/jira/project/jira-project.component';
-import { StompConfig, StompService } from '@stomp/ng2-stompjs';
-import {HttpClientModule, HttpClient} from '@angular/common/http';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {ChartModule} from 'angular2-highcharts';
+import {HttpModule} from '@angular/http';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {AppComponent} from './app.component';
+import {MenuComponent} from './components/menu/menu.component';
+import {GraphComponent} from './components/graph/graph.component';
+import {RouterModule, Routes} from '@angular/router';
+import {TextfieldCellComponent} from './ui/textfield-cell/textfield-cell.component';
+import {ComboboxCellComponent} from './ui/combobox-cell/combobox-cell.component';
+import {DatepickerCellComponent} from './ui/datepicker-cell/datepicker-cell.component';
+import {ActionCellComponent} from './ui/action-cell/action-cell.component';
+import {DatepickerInputComponent} from './ui/datepicker-input/datepicker-input.component';
+import {ContextService} from './services/context.service';
+import {PlushService} from './services/plush.service';
+import {HighchartsStatic} from 'angular2-highcharts/dist/HighchartsService';
+import {PlushComponent} from './components/plush/plush.component';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {LocalStorageModule, LocalStorageService} from 'angular-2-local-storage';
+import {HotkeyModule} from 'angular2-hotkeys';
+import {SettingsComponent} from './components/settings/settings.component';
+import {JiraProjectComponent} from './components/jira/project/jira-project.component';
+import {StompConfig, StompService} from '@stomp/ng2-stompjs';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
+
 declare var require: any;
 
 const appRoutes: Routes = [
-  { path: 'releases', component: ReleasesComponent },
-  { path: 'graph', component: GraphComponent },
-  { path: 'plush', component: PlushComponent },
-  { path: 'settings', component: SettingsComponent },
-  { path: 'jira/project', component: JiraProjectComponent },
-  { path: '*', redirectTo: '/plush', pathMatch: 'full' },
+  {path: 'graph', component: GraphComponent},
+  {path: 'plush', component: PlushComponent},
+  {path: 'settings', component: SettingsComponent},
+  {path: 'jira/project', component: JiraProjectComponent},
+  {path: '*', redirectTo: '/plush', pathMatch: 'full'},
 ];
 
 
@@ -51,8 +48,7 @@ export function getStompConfig() {
     url: url,
 
     // Headers
-    headers: {
-    },
+    headers: {},
 
     // How often to heartbeat?
     // Interval in milliseconds, set to 0 to disable
@@ -93,8 +89,6 @@ export function highchartsFactory() {
     DatepickerCellComponent,
     ActionCellComponent,
     DatepickerInputComponent,
-    NewReleaseComponent,
-    ReleasesComponent,
     PlushComponent,
     SettingsComponent,
     JiraProjectComponent
@@ -105,7 +99,7 @@ export function highchartsFactory() {
     HttpModule,
     HttpClientModule,
     NgbModule.forRoot(),
-    RouterModule.forRoot(appRoutes, { useHash: true }),
+    RouterModule.forRoot(appRoutes, {useHash: true}),
     HotkeyModule.forRoot(),
     ChartModule,
     LocalStorageModule.withConfig({
@@ -121,10 +115,9 @@ export function highchartsFactory() {
     })
 
   ],
-  providers: [//
-    ReleaseService, //
-    PlushService, //
-    ContextService, //
+  providers: [
+    PlushService,
+    ContextService,
     {
       provide: HighchartsStatic,
       useFactory: highchartsFactory
@@ -136,9 +129,7 @@ export function highchartsFactory() {
     },
     LocalStorageService
   ],
-  entryComponents: [
-    NewReleaseComponent
-  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
