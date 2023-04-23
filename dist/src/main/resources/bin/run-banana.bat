@@ -8,7 +8,7 @@ set REPO=%BASEDIR%\lib
 
 set CLASSPATH="%BASEDIR%"\etc;"%REPO%"\*
 
-set JAVA_MAIN_CLASS=fr.aleclerc.banana.BananaApp
+set JAVA_MAIN_CLASS=org.samak.banana.BananaApp
 
 set LOGBACK_CONFIG_FILE="%BASEDIR%/etc/"logback.xml
 
