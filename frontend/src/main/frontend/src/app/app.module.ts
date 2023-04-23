@@ -21,7 +21,6 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {LocalStorageModule, LocalStorageService} from 'angular-2-local-storage';
 import {HotkeyModule} from 'angular2-hotkeys';
 import {SettingsComponent} from './components/settings/settings.component';
-import {JiraProjectComponent} from './components/jira/project/jira-project.component';
 import {StompConfig, StompService} from '@stomp/ng2-stompjs';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 
@@ -30,7 +29,6 @@ declare var require: any;
 const appRoutes: Routes = [
   {path: 'plush', component: PlushComponent},
   {path: 'settings', component: SettingsComponent},
-  {path: 'jira/project', component: JiraProjectComponent},
   {path: '*', redirectTo: '/plush', pathMatch: 'full'},
 ];
 
@@ -87,8 +85,7 @@ export function highchartsFactory() {
     ActionCellComponent,
     DatepickerInputComponent,
     PlushComponent,
-    SettingsComponent,
-    JiraProjectComponent
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

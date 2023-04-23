@@ -11,7 +11,6 @@ public class Fields {
 	private String timespent;
 	private String timeoriginalestimate;
 	private String description;
-	private Project project;
 	private String aggregatetimespent;
 	private String aggregatetimeestimate;
 	private Boolean flagged;
@@ -63,14 +62,6 @@ public class Fields {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 
 	public String getAggregatetimespent() {
