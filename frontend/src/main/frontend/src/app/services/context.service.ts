@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Sprint } from '../models/sprint';
-import { Story } from '../models/story';
-import { StoryService } from './story.service';
 import { SprintService } from './sprint.service';
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 import { LocalStorageService } from 'angular-2-local-storage';

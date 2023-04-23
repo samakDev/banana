@@ -1,7 +1,6 @@
 import { Links } from './links';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import { DateUtils } from '../services/date.service';
-import { StoryInSprint } from './story';
 export class Sprint {
 
 
@@ -21,7 +20,7 @@ export class Sprint {
                 object.complexity,
                 object.engagedComplexity,
                 object.closedComplexity,
-                StoryInSprint.createArray(object._embedded.stories),
+                null,
                 object._links);
         }
         return new Sprint(null, null, new Date(), null, null, 0, 0, 0, 0, 0, 0, new Array(), null);
@@ -39,7 +38,6 @@ export class Sprint {
         public complexity: number,
         public engagedComplexity: number,
         public closedComplexity: number,
-        public stories: Array<StoryInSprint>,
         public _links: Links) {
         if (this.start != null) {
             this.start.setHours(0, 0, 0, 0);

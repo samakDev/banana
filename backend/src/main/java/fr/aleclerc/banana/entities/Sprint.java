@@ -7,10 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.Period;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -35,9 +31,6 @@ public class Sprint implements Serializable {
     @Column(name = "end_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Instant end;
-
-    @OneToMany(mappedBy = "sprint")
-    private Set<StoryInSprint> stories = new HashSet<>();
 
     @ManyToOne
     private Release release;
@@ -74,14 +67,6 @@ public class Sprint implements Serializable {
         this.end = end;
     }
 
-    public Set<StoryInSprint> getStories() {
-        return stories;
-    }
-
-    public void setStories(Set<StoryInSprint> stories) {
-        this.stories = stories;
-    }
-
     public String getJiraId() {
         return jiraId;
     }
@@ -106,81 +91,6 @@ public class Sprint implements Serializable {
         this.boardId = boardId;
     }
 
-    public Float getBusinessValue() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .filter(StoryInSprint::getInScope)//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .map(Story::getBusinessValue)//
-                .filter(Objects::nonNull)//
-                .reduce(0F, (acc, v) -> acc + v);
-    }
-
-    public Float getEngagedBusinessValue() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getAdded() != null)//
-                .filter(s -> s.getAdded().minus(Period.ofDays(1)).isBefore(this.start))//
-                .filter(s -> s.getRemoved() == null || s.getRemoved().isAfter(this.start))//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getBusinessValue() != null)//
-                .map(Story::getBusinessValue)//
-                .filter(Objects::nonNull)//
-                .reduce(0F, (acc, v) -> acc + v);
-    }
-    public Float getClosedBusinessValue() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getBusinessValue() != null)//
-                .filter(s -> s.getCloseDate() != null)//
-                .filter(s -> s.getCloseDate().minus(Period.ofDays(1)).isBefore(this.end))//
-                .map(Story::getBusinessValue)//
-                .filter(Objects::nonNull)//
-                .reduce(0f, (acc, v) -> acc + v);
-    }
-
-    public Float getComplexity() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .filter(StoryInSprint::getInScope)//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .map(Story::getComplexity)//
-                .filter(Objects::nonNull)//
-                .reduce(0F, (acc, v) -> acc + v);
-    }
-
-    public Float getEngagedComplexity() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getAdded() != null)//
-                .filter(s -> s.getAdded().minus(Period.ofDays(1)).isBefore(this.start))//
-                .filter(s -> s.getRemoved() == null || s.getRemoved().isAfter(this.start))//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getComplexity() != null)//
-                .map(Story::getComplexity)//
-                .filter(Objects::nonNull)//
-                .reduce(0F, (acc, v) -> acc + v);
-    }
-
-    public Float getClosedComplexity() {
-        return stories.stream()//
-                .filter(Objects::nonNull)//
-                .map(StoryInSprint::getStory)//
-                .filter(Objects::nonNull)//
-                .filter(s -> s.getComplexity() != null)//
-                .filter(s -> s.getCloseDate() != null)//
-                .filter(s -> s.getCloseDate().minus(Period.ofDays(1)).isBefore(this.end))//
-                .map(Story::getComplexity)//
-                .filter(Objects::nonNull)//
-                .reduce(0f, (acc, v) -> acc + v);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -198,10 +108,5 @@ public class Sprint implements Serializable {
         result = 31 * result + (jiraId != null ? jiraId.hashCode() : 0);
         return result;
     }
-
-    public void addStory(StoryInSprint storyInSprint) {
-        this.stories.add(storyInSprint);
-    }
-
 
 }

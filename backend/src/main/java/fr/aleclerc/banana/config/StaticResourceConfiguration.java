@@ -10,7 +10,7 @@ public class StaticResourceConfiguration implements WebMvcConfigurer {
 
     private static final String[] ROUTER = {
             "/sprints", "/sprint/**",
-            "/stories", "/story/**", "/plush", "/graph"};
+            "/stories", "/plush", "/graph"};
 
 
     @Override
