@@ -3,21 +3,21 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "banana": {
+    "angular-front-test": {
       "projectType": "application",
       "schematics": {},
-      "root": "src",
+      "root": "",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "../../../target/frontend",
+            "outputPath": "dist/angular-front-test",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
-              "src/polyfills.ts"
+              "zone.js"
             ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
@@ -30,7 +30,7 @@
               "src/styles.css"
             ],
             "scripts": [
-              "../node_modules/moment/min/moment.min.js"
+              "./node_modules/moment/min/moment.min.js"
             ]
           },
           "configurations": {

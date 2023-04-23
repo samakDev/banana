@@ -54,3 +54,5 @@ frontend/src/main/frontend/node
 node_modules/
 .vscode/
 **.releaseBackup
+
+frontend/src/main/frontend/.angular

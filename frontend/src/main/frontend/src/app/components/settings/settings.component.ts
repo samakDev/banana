@@ -16,10 +16,16 @@ export class SettingsComponent implements OnInit {
 
   constructor(private contextService: ContextService, private translateService: TranslateService) {
     this.contextService.getFullScreenMode()
-      .subscribe(v => this.isFullScreen = v, e => console.error(e));
+      .subscribe({
+        next: (v) => this.isFullScreen = v,
+        error: (e) => console.error(e)
+      });
 
     this.contextService.getShowWeekend()
-      .subscribe(v => this.isShowWeekend = v, e => console.error(e));
+      .subscribe({
+        next: v => this.isShowWeekend = v,
+        error: (e) => console.error(e)
+      });
 
     this.currentLang = this.translateService.currentLang;
     this.langs = this.translateService.getLangs();

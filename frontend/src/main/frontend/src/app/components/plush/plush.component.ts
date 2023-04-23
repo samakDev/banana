@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
+import {LocalStorageService} from 'angular-2-local-storage';
 import {PlushService} from '../../services/plush.service';
 import {PlushState} from '../../models/plush-state';
 import {Plush} from '../../models/plush';
 import {User} from '../../models/user';
-import {LocalStorageService} from 'angular-2-local-storage';
 import {ContextService} from '../../services/context.service';
+import {Constants} from "../../constants";
 
 @Component({
   selector: 'app-plush',
@@ -22,19 +23,33 @@ export class PlushComponent implements OnInit {
   constructor(private plushService: PlushService,
               private localStorageService: LocalStorageService,
               private contextService: ContextService) {
-    this.memberName = localStorageService.get<string>('memberName');
-    this.memberId = localStorageService.get<string>('memberId');
-    if (this.memberName != null && this.memberName !== '') {
+    this.memberName = localStorageService.get<string>(Constants.LOCAL_STORAGE_MEMBER_NAME);
+    this.memberId = localStorageService.get<string>(Constants.LOCAL_STORAGE_MEMBER_ID);
+
+    if (this.isMemberNameValid()) {
       this.isValid = true;
     }
   }
 
-  ngOnInit() {
-    this.plushService.getPlushs().subscribe(plush => this.addOrReplace(plush), e => console.error(e));
-    this.contextService.getFullScreenMode().subscribe(v => this.isFullScreen = v, e => console.error(e));
+  private isMemberNameValid() {
+    return this.memberName != null && this.memberName !== '';
   }
 
-  private addOrReplace(plush: PlushState): void {
+  ngOnInit() {
+    this.plushService.getPlushs()
+      .subscribe({
+        next: (plush) => this.addOrUpdate(plush),
+        error: (e) => console.error(e)
+      });
+
+    this.contextService.getFullScreenMode()
+      .subscribe({
+        next: (v) => this.isFullScreen = v,
+        error: (e) => console.error(e)
+      });
+  }
+
+  private addOrUpdate(plush: PlushState): void {
     const index = this.plushs.findIndex(s => s.plush.id === plush.plush.id);
 
     if (index !== -1) {
@@ -45,14 +60,14 @@ export class PlushComponent implements OnInit {
   }
 
   onMemberNameChange(): void {
-    if (this.memberName != null && this.memberName !== '') {
+    if (this.isMemberNameValid()) {
       this.memberId = this.memberName.trim().toLowerCase();
-      this.localStorageService.set('memberName', this.memberName);
-      this.localStorageService.set('memberId', this.memberId);
+      this.localStorageService.set(Constants.LOCAL_STORAGE_MEMBER_NAME, this.memberName);
+      this.localStorageService.set(Constants.LOCAL_STORAGE_MEMBER_ID, this.memberId);
       this.isValid = true;
     } else {
-      this.localStorageService.set('memberName', null);
-      this.localStorageService.set('memberId', null);
+      this.localStorageService.set(Constants.LOCAL_STORAGE_MEMBER_NAME, null);
+      this.localStorageService.set(Constants.LOCAL_STORAGE_MEMBER_ID, null);
       this.isValid = false;
     }
   }

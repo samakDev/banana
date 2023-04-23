@@ -1,43 +1,63 @@
-import { Injectable } from '@angular/core';
-import { StompService, StompState } from '@stomp/ng2-stompjs';
-import { Observable } from 'rxjs/Rx';
-import { PlushState } from '../models/plush-state';
+import {Injectable} from '@angular/core';
+import {concat, from, map, mergeMap, Observable, share} from 'rxjs';
+import {PlushState} from '../models/plush-state';
+import {Constants} from '../constants';
+import {RxStompService} from "./stomp/rx-stomp.service";
 
 @Injectable()
 export class PlushService {
 
-    private plushObs: Observable<PlushState>;
-    private plushStates: Array<PlushState>;
-    constructor(private stompService: StompService) {
-        this.plushStates = new Array();
+  private plushObs: Observable<PlushState>;
+  private plushStates: Array<PlushState>;
+
+  constructor(private stompService: RxStompService) {
+    this.plushStates = [];
+  }
+
+
+  public getPlushs(): Observable<PlushState> {
+    if (this.plushObs == null) {
+      this.plushObs = this.stompService.watch(Constants.QUEUE_BROKER_STATE_NAME)
+        .pipe(map(message => JSON.parse(message.body)))
+        .pipe(map(obj => PlushState.createFromArray(obj)))
+        .pipe(mergeMap(plushStats => from(plushStats)))
+        .pipe(share())
+
+      this.plushObs.subscribe({
+        next: (plushState) => this.addOrUpdate(plushState),
+        error: (e) => console.error(e)
+      });
     }
 
-    public getPlushs(): Observable<PlushState> {
-        if (this.plushObs == null) {
-            this.plushObs = this.stompService.subscribe('/plush/states')//
-                .map(m => PlushState.createFromArray(JSON.parse(m.body)))//
-                .flatMap(plushs => Observable.from(plushs))//
-                .share();
-            this.plushObs.subscribe(m => this.addOrReplace(m), e => console.error(e));
-        }
-        return Observable.concat(Observable.from(this.plushStates), this.plushObs);
-    }
+    return concat(from(this.plushStates), this.plushObs)
+  }
 
-    public take(plush: PlushState) {
-        this.stompService.publish('/plush/take', JSON.stringify(plush));
-    }
+  private addOrUpdate(plush: PlushState): void {
+    const index = this.plushStates.findIndex(s => s.plush.id === plush.plush.id);
 
-    public release(plush: PlushState) {
-        this.stompService.publish('/plush/release', JSON.stringify(plush));
+    if (index !== -1) {
+      this.plushStates[index] = plush;
+    } else {
+      this.plushStates.push(plush);
     }
+  }
 
-    private addOrReplace(plush: PlushState): void {
-        const index = this.plushStates.findIndex(s => s.plush.id === plush.plush.id);
-        if (index !== -1) {
-            this.plushStates[index] = plush;
-        } else {
-            this.plushStates.push(plush);
-        }
-    }
+  public take(plush: PlushState) {
+    const body = JSON.stringify(plush);
+
+    this.stompService.publish({
+      destination: '/plush/take',
+      body: body
+    });
+  }
+
+  public release(plush: PlushState) {
+    const body = JSON.stringify(plush);
+
+    this.stompService.publish({
+      destination: '/plush/release',
+      body: body
+    });
+  }
 
 }

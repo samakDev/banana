@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs/Rx';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {LocalStorageService} from 'angular-2-local-storage';
 import {Hotkey, HotkeysService} from 'angular2-hotkeys';
 

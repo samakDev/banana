@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ContextService} from '../../services/context.service';
+import {distinctUntilChanged} from "rxjs";
 
 @Component({
   selector: 'app-menu',
@@ -7,8 +8,10 @@ import {ContextService} from '../../services/context.service';
 })
 export class MenuComponent implements OnInit {
 
-  isCollapsed: Boolean = false;
-  isFullScreen: Boolean = false;
+  isCollapsed: boolean = false;
+  isFullScreen: boolean = false;
+
+  showSprints: boolean = false;
 
   constructor(private contextService: ContextService) {
 
@@ -16,9 +19,10 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.contextService.getFullScreenMode()
-      .distinctUntilChanged()
-      .subscribe(v => this.isFullScreen = v, e => console.error(e));
-
-
+      .pipe(distinctUntilChanged())
+      .subscribe({
+        next: (v) => this.isFullScreen = v.valueOf(),
+        error: (e) => console.error(e)
+      });
   }
 }
