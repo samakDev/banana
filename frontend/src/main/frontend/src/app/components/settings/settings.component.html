@@ -1,31 +1,54 @@
 <div class="container-fluid">
   <h1 translate>settings</h1>
 </div>
+
 <div class="container">
-
-
   <div class="form-group">
-    <label for="type" translate>lang</label> <select id="lang" class="form-control" name="lang" [(ngModel)]="currentLang"
-      (ngModelChange)="onCurrentLangChange($event)">
-        <option *ngFor="let lang of langs" [ngValue]="lang" translate>{{lang}}</option>
-			</select>
+    <label for="type" translate>lang</label>
+    <select id="lang"
+            class="form-control"
+            name="lang"
+            [(ngModel)]="currentLang"
+            (ngModelChange)="onCurrentLangChange($event)">
+      <option *ngFor="let lang of langs"
+              [ngValue]="lang"
+              translate>
+        {{lang}}
+      </option>
+    </select>
   </div>
 
   <div class="form-group">
     <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-    <input type="checkbox" #cbFullScreen class="custom-control-input" [(ngModel)]="isFullScreen" (ngModelChange)="onFullScreenChange(cbFullScreen.checked)" />
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description" translate>fullScreen</span>
-  </label>
+      <input type="checkbox"
+             #cbFullScreen
+             class="custom-control-input"
+             [(ngModel)]="isFullScreen"
+             (ngModelChange)="onFullScreenChange(cbFullScreen.checked)"/>
+
+      <span class="custom-control-indicator"></span>
+
+      <span class="custom-control-description" translate>
+        fullScreen
+      </span>
+    </label>
   </div>
 
 
   <div class="form-group">
     <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-    <input type="checkbox" #cbWeekend class="custom-control-input" [(ngModel)]="isShowWeekend" (ngModelChange)="onShowWeekendChange(cbWeekend.checked)" />
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description" translate>showWeekend</span>
-  </label>
+      <input type="checkbox"
+             #cbWeekend
+             class="custom-control-input"
+             [(ngModel)]="isShowWeekend"
+             (ngModelChange)="onShowWeekendChange(cbWeekend.checked)"/>
+
+      <span class="custom-control-indicator"></span>
+
+      <span class="custom-control-description" translate>
+        showWeekend
+      </span>
+    </label>
   </div>
 
 </div>
