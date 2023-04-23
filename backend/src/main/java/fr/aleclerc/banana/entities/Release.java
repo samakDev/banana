@@ -30,9 +30,6 @@ public class Release implements Serializable {
 	@Column
 	private String name;
 	
-	@OneToMany(mappedBy="release")
-	private List<Sprint> sprint;
-
 	@ManyToOne
 	private Project project;
 
@@ -51,14 +48,6 @@ public class Release implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public List<Sprint> getSprint() {
-		return sprint;
-	}
-
-	public void setSprint(List<Sprint> sprint) {
-		this.sprint = sprint;
 	}
 
 	public Project getProject() {
@@ -81,7 +70,7 @@ public class Release implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Release [id=" + id + ", name=" + name + ", sprint=" + sprint + "]";
+		return "Release [id=" + id + ", name=" + name + "]";
 	}
 	
 	

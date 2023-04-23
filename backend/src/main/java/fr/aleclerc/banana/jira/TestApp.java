@@ -6,7 +6,6 @@ import fr.aleclerc.banana.jira.api.config.IJiraClientConfig;
 import fr.aleclerc.banana.jira.api.pojo.Issue;
 import fr.aleclerc.banana.jira.app.service.IssueService;
 import fr.aleclerc.banana.jira.app.service.RxRestService;
-import fr.aleclerc.banana.jira.app.service.SprintService;
 
 import java.nio.file.Paths;
 import java.time.Instant;

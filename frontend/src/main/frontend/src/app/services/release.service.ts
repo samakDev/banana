@@ -23,8 +23,6 @@ export class ReleaseService extends AbstractRestClientService<Release>  {
         return this._getOne(id).map(o => Release.create(o));
     }
     public save(release: Release): Observable<Release> {
-        //   let copy = {...sprint};
-        //copy.stories = null;
         return this._save(Release.create(release));
     }
 

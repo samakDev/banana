@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import fr.aleclerc.banana.jira.api.config.IJiraClientConfig;
 import fr.aleclerc.banana.jira.api.pojo.Issue;
-import fr.aleclerc.banana.jira.api.service.IIssueService;
+import fr.aleclerc.banana.jira.api.service.IJiraApiService;
 import fr.aleclerc.banana.utils.Tuple;
 import io.reactivex.Single;
 import org.slf4j.Logger;
@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
-public class IssueService implements IIssueService {
+public class IssueService implements IJiraApiService<Issue> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IssueService.class);
     private final IJiraClientConfig config;
@@ -46,28 +45,11 @@ public class IssueService implements IIssueService {
 //        Issue i = new Issue();
 //        i.setId(id);
 //     return   Single.just(i );
-        return restService.get("/rest/agile/1.0/issue/" + id+ "?expand=changelog")//
+        return restService.get("/rest/agile/1.0/issue/" + id + "?expand=changelog")//
                 .map(this::getIssue)//
                 .filter(Optional::isPresent)//
                 .map(Optional::get)//
                 .toSingle();
-    }
-
-    @Override
-    public Single<List<Issue>> getFromSprint(String sprintId) {
-        return restService.get("/rest/agile/1.0/sprint/" + sprintId + "/issue?expand=changelog")//
-                .map(this::getIssues);
-    }
-
-    private List<Issue> getIssues(JsonNode response) {
-        JsonNode issues = response.get("issues");
-        LOGGER.info("Parse {} issues",   issues.size());
-        return StreamSupport.stream(issues.spliterator(), false)//
-                .map(this::getIssue)//
-                .filter(Optional::isPresent)//
-                .map(Optional::get)//
-                .collect(Collectors.toList());
-
     }
 
     private Optional<Issue> getIssue(JsonNode issue) {

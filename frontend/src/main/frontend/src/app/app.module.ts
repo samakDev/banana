@@ -16,10 +16,6 @@ import { DatepickerInputComponent } from './ui/datepicker-input/datepicker-input
 import { ReleaseService } from './services/release.service';
 import { ReleasesComponent } from './components/releases/releases.component';
 import { NewReleaseComponent } from './components/new-release/new-release.component';
-import { SprintComponent } from './components/sprint/sprint.component';
-import { SprintsComponent } from './components/sprints/sprints.component';
-import { NewSprintComponent } from './components/new-sprint/new-sprint.component';
-import { SprintService } from './services/sprint.service';
 import { ContextService } from './services/context.service';
 import { PlushService } from './services/plush.service';
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
@@ -30,20 +26,16 @@ import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SettingsComponent } from './components/settings/settings.component';
 import { JiraProjectComponent } from './components/jira/project/jira-project.component';
-import { JiraSprintComponent } from './components/jira/sprint/jira-sprint.component';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import {HttpClientModule, HttpClient} from '@angular/common/http';
 declare var require: any;
 
 const appRoutes: Routes = [
   { path: 'releases', component: ReleasesComponent },
-  { path: 'sprints', component: SprintsComponent },
-  { path: 'sprint/:id', component: SprintComponent },
   { path: 'graph', component: GraphComponent },
   { path: 'plush', component: PlushComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'jira/project', component: JiraProjectComponent },
-  { path: 'jira/sprint/:id', component: JiraSprintComponent },
   { path: '*', redirectTo: '/plush', pathMatch: 'full' },
 ];
 
@@ -103,13 +95,9 @@ export function highchartsFactory() {
     DatepickerInputComponent,
     NewReleaseComponent,
     ReleasesComponent,
-    SprintComponent,
-    SprintsComponent,
-    NewSprintComponent,
     PlushComponent,
     SettingsComponent,
-    JiraProjectComponent,
-    JiraSprintComponent
+    JiraProjectComponent
   ],
   imports: [
     BrowserModule,
@@ -135,7 +123,6 @@ export function highchartsFactory() {
   ],
   providers: [//
     ReleaseService, //
-    SprintService, //
     PlushService, //
     ContextService, //
     {
@@ -149,9 +136,8 @@ export function highchartsFactory() {
     },
     LocalStorageService
   ],
-  entryComponents: [//
-    NewReleaseComponent, //
-    NewSprintComponent//
+  entryComponents: [
+    NewReleaseComponent
   ],
   bootstrap: [AppComponent]
 })

@@ -73,7 +73,4 @@ The string returned is your password as clear text (be careful !)
 
 Once you have produced the secure token, you need to update the config file with this token.
 
-Finally, restart Banana, and click on Jira menu. You should see the list of your backlogs, sprint and so on.
-
-You can import a sprint by pushing the "orange" button on the right of the row.
-
+Finally, restart Banana, and click on Jira menu. You should see the list of your backlogs and so on.

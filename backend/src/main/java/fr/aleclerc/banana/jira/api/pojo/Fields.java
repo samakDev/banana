@@ -10,7 +10,6 @@ public class Fields {
 	private IssueType issuetype;
 	private String timespent;
 	private String timeoriginalestimate;
-	private Sprint sprint;
 	private String description;
 	private Project project;
 	private String aggregatetimespent;
@@ -56,14 +55,6 @@ public class Fields {
 
 	public void setTimeoriginalestimate(String timeoriginalestimate) {
 		this.timeoriginalestimate = timeoriginalestimate;
-	}
-
-	public Sprint getSprint() {
-		return sprint;
-	}
-
-	public void setSprint(Sprint sprint) {
-		this.sprint = sprint;
 	}
 
 	public String getDescription() {
