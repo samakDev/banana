@@ -17,8 +17,8 @@ import {SettingsComponent} from './components/settings/settings.component';
 import {ContextService} from './services/context.service';
 import {PlushService} from './services/plush.service';
 import {RxStompService} from "./services/stomp/rx-stomp.service";
-import {rxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
-import {getStompConfig} from "./services/stomp/rx.stomp.config";
+import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
+import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
 
 declare var require: any;
@@ -78,11 +78,9 @@ export function highchartsFactory() {
       provide: HighchartsStatic,
       useFactory: highchartsFactory
     },
+    RxStompConfigProvider,
+    RxStompServiceFactory,
     RxStompService,
-    {
-      provide: getStompConfig,
-      useFactory: rxStompServiceFactory
-    },
     LocalStorageService
   ],
   bootstrap: [AppComponent]

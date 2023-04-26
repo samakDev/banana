@@ -1,14 +1,23 @@
 import {RxStompService} from './rx-stomp.service';
-// import {StompConfig, StompService} from '@stomp/ng2-stompjs';
-import {getStompConfig} from './rx.stomp.config';
+import {RxStompConfigProvider} from './rx.stomp.config';
+import {Injectable} from "@angular/core";
 
+@Injectable()
+export class RxStompServiceFactory {
 
-export function rxStompServiceFactory() {
-  const rxStomp = new RxStompService();
-  rxStomp.configure(getStompConfig());
-  rxStomp.activate();
-  return rxStomp;
+  rxStompService: RxStompService = null;
+
+  constructor(private provider: RxStompConfigProvider) {
+  }
+
+  public getRxStompService(): RxStompService {
+    if (this.rxStompService === null) {
+      this.rxStompService = new RxStompService();
+      this.rxStompService.configure(this.provider.getStompConfig());
+      this.rxStompService.activate();
+      this.rxStompService.connected();
+    }
+
+    return this.rxStompService;
+  }
 }
-
-
-

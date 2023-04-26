@@ -11,17 +11,7 @@ export class PlushState {
     return new PlushState(object.plush, object.owner);
   }
 
-  public static createFromArray(object: any): Array<PlushState> {
-    if (object != null && object instanceof Array) {
-      return object.map(v => new PlushState(v.plush, v.owner));
-    }
-
-    return null;
-  }
-
-
   constructor(public plush: Plush, public owner: User) {
   }
-
 
 }

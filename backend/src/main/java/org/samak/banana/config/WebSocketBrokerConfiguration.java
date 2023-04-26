@@ -15,18 +15,19 @@ import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
+public class WebSocketBrokerConfiguration implements WebSocketMessageBrokerConfigurer {
     public static final String TOPIC_PREFIX = "/plush";
     public static final String ENDPOINT_PREFIX = "/websocket";
 
     @Override
-    public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker(TOPIC_PREFIX);
+    public void configureMessageBroker(final MessageBrokerRegistry registry) {
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker(TOPIC_PREFIX);
     }
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint(ENDPOINT_PREFIX);
+        registry.addEndpoint(ENDPOINT_PREFIX).setAllowedOrigins("*");
     }
 
     @Override
