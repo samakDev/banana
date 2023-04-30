@@ -1,0 +1,34 @@
+<div class="container">
+  <h2 translate="create-new-plush-title"></h2>
+
+  <div class="mb-3">
+    <label for="plushName"
+           class="form-label"
+           translate="new-plush-name-label"></label>
+
+    <input type="text"
+           id="plushName"
+           class="form-control"
+           [(ngModel)]="plushName"
+           placeholder="{{ 'new-plush-name-placeholder' | translate }}"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="plushImg"
+           class="form-label"
+           translate="new-plush-img-label"></label>
+
+    <input type="file"
+           id="plushImg"
+           class="form-control"
+           [(ngModel)]="plushImg"
+           placeholder="{{ 'new-plush-img-placeholder' | translate }}"/>
+  </div>
+
+  <div class="mb-3 float-end">
+    <button type="button"
+            class="btn btn-primary"
+            (click)="sendCreatePlush($event)"
+            translate="create-plush-button-label"></button>
+  </div>
+</div>

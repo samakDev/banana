@@ -4,15 +4,16 @@ import {PlushState} from '../models/plush-state';
 import {RxStompService} from "./stomp/rx-stomp.service";
 import {Constants} from "../constants";
 import {RxStompServiceFactory} from "./stomp/rx-stomp-service-factory";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Injectable()
 export class PlushService {
 
   private plushObs: Observable<PlushState>;
-  private plushStates: Array<PlushState>;
+  private readonly plushStates: Array<PlushState>;
   private stompService: RxStompService;
 
-  constructor(rxStompServiceFactory: RxStompServiceFactory) {
+  constructor(rxStompServiceFactory: RxStompServiceFactory, private httpClient: HttpClient) {
     this.plushStates = [];
 
     this.stompService = rxStompServiceFactory.getRxStompService()
@@ -44,6 +45,32 @@ export class PlushService {
     } else {
       this.plushStates.push(plush);
     }
+  }
+
+  public sendCreatePlushCmd(plushName: string, imgPath: File) {
+    console.log("plushService sendCreatePlushCmd")
+    console.log('plushName : ', plushName);
+    console.log('imgPath : ', imgPath);
+    const body = JSON.stringify({
+      plushName: plushName,
+      imagePath: imgPath
+    });
+
+    const data = new FormData();
+    data.append("plushName", plushName);
+    data.append("imagePath", imgPath);
+
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*'
+    });
+
+    this.httpClient.post("http://127.0.0.1:9000/api/plush/create", data, {
+      headers: headers
+    })
+      .subscribe({
+        next: response => console.log('response : ', response),
+        error: e => console.error('e : ', e)
+      });
   }
 
   public take(plush: PlushState) {

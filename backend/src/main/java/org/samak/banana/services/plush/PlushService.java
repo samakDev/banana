@@ -6,10 +6,13 @@ import io.reactivex.subjects.Subject;
 import org.samak.banana.domain.plush.IPlushConfig;
 import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
+import org.samak.banana.entity.PlushEntity;
+import org.samak.banana.repository.PlushRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -19,9 +22,10 @@ public class PlushService implements IPlushService {
 
     private final Map<String, PlushState> plushStates = new HashMap<>();
     private final Subject<PlushState> stateSubject = PublishSubject.create();
+    private final PlushRepository plushRepository;
 
-    public PlushService(final IPlushConfig plushConfig) {
-        LOGGER.info("Plush Service Constructor : {}", plushConfig);
+    public PlushService(final IPlushConfig plushConfig, final PlushRepository plushRepository) {
+        this.plushRepository = plushRepository;
 
         plushConfig.getPlushs()
                 .forEach(p -> {
@@ -30,6 +34,18 @@ public class PlushService implements IPlushService {
 
                     plushStates.put(p.getId(), state);
                 });
+    }
+
+    @Override
+    public UUID createPlush(final String plushName, final String filename, final InputStream imgInputString) {
+        //Save File
+
+        // Save entity
+        final PlushEntity entity = new PlushEntity();
+        entity.setName(plushName);
+        entity.setImg(filename);
+
+        return plushRepository.save(entity).getId();
     }
 
     @Override

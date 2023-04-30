@@ -20,6 +20,9 @@ import {RxStompService} from "./services/stomp/rx-stomp.service";
 import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
 import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
+import {
+  SettingsCreateNewPlushComponent
+} from "./components/settings/settings-create-new-plush/settings-create-new-plush.component";
 
 declare var require: any;
 
@@ -47,7 +50,8 @@ export function highchartsFactory() {
     AppComponent,
     MenuComponent,
     PlushComponent,
-    SettingsComponent
+    SettingsComponent,
+    SettingsCreateNewPlushComponent
   ],
   imports: [
     BrowserModule,
