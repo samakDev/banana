@@ -20,6 +20,13 @@
     </scm>
 
     <dependencies>
+        <!-- INTERNAL -->
+        <dependency>
+            <groupId>org.samak.banana</groupId>
+            <artifactId>banana-dto</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <!-- SPRING -->
 
         <!-- Spring Secu -->
