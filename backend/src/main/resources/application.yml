@@ -1,20 +1,24 @@
 spring:
-    application:
-        name: banana
-    datasource:
-      platform: h2
-      url: "jdbc:h2:${java.io.tmpdir}/banana;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
-    jpa:
-      show-sql: true
-      database: H2
-      database-platform: H2
-      generate-ddl: true
-      hibernate.ddl-auto: update
-    data:
-      rest:
-        basePath: /api
-    mvc:
-      favicon:
-        enabled: false
+  application:
+    name: banana
+  datasource:
+    platform: h2
+    url: "jdbc:h2:${java.io.tmpdir}/banana_folder/banana;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE"
+  jpa:
+    show-sql: true
+    database: H2
+    database-platform: H2
+    hibernate.ddl-auto: none
+  flyway:
+    locations: classpath:db.migration
+    url: jdbc:h2:${java.io.tmpdir}/banana_folder/banana;AUTO_SERVER=TRUE
+    baselineOnMigrate: true
+    baselineVersion: 0
+  data:
+    rest:
+      basePath: /api
+  mvc:
+    favicon:
+      enabled: false
 server:
-    port: ${PORT:9000}
+  port: ${PORT:9000}
