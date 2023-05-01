@@ -26,6 +26,7 @@
         <!-- dependencies version -->
         <rxjava.version>2.2.21</rxjava.version>
         <postgresql.version>42.1.4</postgresql.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
 
         <!-- plugins version -->
         <frontend.plugin.version>1.12.1</frontend.plugin.version>
@@ -93,6 +94,13 @@
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-nodeps</artifactId>
                 <version>${ant-nodeps.version}</version>
+            </dependency>
+
+            <!-- MapStruct -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
 
             <!-- BDD -->

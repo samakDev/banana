@@ -1,9 +1,11 @@
 package org.samak.banana.controllers;
 
 import org.apache.logging.log4j.util.Strings;
+import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.ClawMachine;
 import org.samak.banana.dto.ClawMachineIdentifier;
 import org.samak.banana.dto.ClawMachineIdentifiers;
+import org.samak.banana.mapper.ClawMachineMapper;
 import org.samak.banana.services.clawmachine.ClawMachineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +27,8 @@ import java.util.UUID;
 public class ClawMachineController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClawMachineController.class);
+    private static final ClawMachineMapper CLAW_MACHINE_MAPPER = Mappers.getMapper(ClawMachineMapper.class);
+
     private final ClawMachineService clawMachineService;
 
     public ClawMachineController(final ClawMachineService clawMachineService) {
@@ -51,7 +56,7 @@ public class ClawMachineController {
                 .body(identifier);
     }
 
-    @GetMapping(value = "/clawMachines", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClawMachineIdentifiers> getAll() {
         LOGGER.info("ClawMachineController.getAll");
 
@@ -65,5 +70,16 @@ public class ClawMachineController {
                 .build();
 
         return ResponseEntity.ok(identifiers);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ClawMachine> getClawMachine(@PathVariable("id") final UUID clawMachineId) {
+        LOGGER.info("ClawMachineController.getAll");
+
+        final ClawMachine clawMachine = clawMachineService.getClawMachine(clawMachineId)
+                .map(CLAW_MACHINE_MAPPER::convertClawMachineEntityToDto)
+                .orElseThrow(() -> new IllegalArgumentException("not ClawMachine found for this id"));
+
+        return ResponseEntity.ok(clawMachine);
     }
 }

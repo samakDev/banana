@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
@@ -35,5 +36,10 @@ public class ClawMachineService implements IClawMachineService {
         return StreamSupport.stream(clawMachineRepository.findAll().spliterator(), false)
                 .map(ClawMachineEntity::getId)
                 .toList();
+    }
+
+    @Override
+    public Optional<ClawMachineEntity> getClawMachine(final UUID clawMachineId) {
+        return clawMachineRepository.findById(clawMachineId);
     }
 }
