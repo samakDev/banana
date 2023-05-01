@@ -27,6 +27,8 @@ public class ClawMachineService implements IClawMachineService {
 
         if (Objects.isNull(order)) {
             entity.setOrder(Integer.MAX_VALUE);
+        } else {
+            entity.setOrder(order);
         }
 
         return clawMachineRepository.save(entity).getId();
