@@ -10,7 +10,6 @@ import {TranslateService} from '@ngx-translate/core';
 export class SettingsComponent implements OnInit {
 
   isFullScreen: Boolean = false;
-  isShowWeekend: Boolean = false;
   currentLang: string;
   langs: Array<string>;
 
@@ -21,15 +20,8 @@ export class SettingsComponent implements OnInit {
         error: (e) => console.error(e)
       });
 
-    this.contextService.getShowWeekend()
-      .subscribe({
-        next: v => this.isShowWeekend = v,
-        error: (e) => console.error(e)
-      });
-
     this.currentLang = this.translateService.currentLang;
     this.langs = this.translateService.getLangs();
-
   }
 
   ngOnInit() {
@@ -37,10 +29,6 @@ export class SettingsComponent implements OnInit {
 
   onFullScreenChange(checked: Boolean) {
     this.contextService.setFullScreenMode(checked);
-  }
-
-  onShowWeekendChange(show: Boolean) {
-    this.contextService.setShowWeekend(show);
   }
 
   onCurrentLangChange(currentLang: string) {
