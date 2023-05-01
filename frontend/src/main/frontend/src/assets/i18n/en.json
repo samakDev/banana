@@ -9,4 +9,12 @@
   "fr": "French",
   "en": "English",
   "settings-fullScreen": "FullScreen (CTRL + SIFT + F)",
+  "settings-claw-machine_create-new-claw_machine-title": "Create new Claw Machine",
+  "settings-claw-machine_new-claw-machine-name-label": "Machine name",
+  "settings-claw-machine_new-claw-machine-name-placeholder": "Default name",
+  "settings-claw-machine_new-claw-machine-order-label": "Machine print order",
+  "settings-claw-machine_new-claw-machine-order-placeholder": "5",
+  "settings-claw-machine_create-claw-machine-button-label": "Create",
+  "settings-claw-machine_new-claw-machine-created-success": "Claw Machine successfuly created",
+  "settings-claw-machine_new-claw-machine-created-error": "Creation failed"
 }

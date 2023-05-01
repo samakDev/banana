@@ -1,0 +1,43 @@
+<div class="container">
+  <h2 translate="settings-claw-machine_create-new-claw_machine-title"></h2>
+
+  <div class="mb-3">
+    <label for="clawMachineName"
+           class="form-label"
+           translate="settings-claw-machine_new-claw-machine-name-label"></label>
+
+    <input type="text"
+           id="clawMachineName"
+           class="form-control"
+           [(ngModel)]="clawMachineName"
+           placeholder="{{ 'settings-claw-machine_new-claw-machine-name-placeholder' | translate }}"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="clawMachineOrder"
+           class="form-label"
+           translate="settings-claw-machine_new-claw-machine-order-label"></label>
+
+    <input type="number"
+           id="clawMachineOrder"
+           class="form-control"
+           [(ngModel)]="clawMachineOrder"
+           placeholder="{{ 'settings-claw-machine_new-claw-machine-order-placeholder' | translate }}"/>
+  </div>
+
+  <div *ngIf="responseSuccess !== undefined"
+       class="mb-3 alert"
+       [ngClass]="{'alert-primary': responseSuccess, 'alert-danger': !responseSuccess}"
+       role="alert">
+    {{ responseText | translate }}
+  </div>
+
+  <div class="mb-3 float-end">
+    <button type="button"
+            class="btn btn-primary"
+            (click)="sendCreateClawMachine($event)"
+            [disabled]="clawMachineName===undefined || clawMachineName === ''"
+            translate="settings-claw-machine_create-claw-machine-button-label"></button>
+  </div>
+
+</div>

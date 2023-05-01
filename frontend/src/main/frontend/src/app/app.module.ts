@@ -20,6 +20,11 @@ import {RxStompService} from "./services/stomp/rx-stomp.service";
 import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
 import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
+import {
+  SettingsClawMachineComponent
+} from './components/settings/settings-claw-machine/settings-claw-machine.component';
+import {ClawMachineService} from "./services/claw.machine.service";
+import {HttpBananaSenderService} from "./services/http.banana.sender.service";
 
 declare var require: any;
 
@@ -46,8 +51,9 @@ export function highchartsFactory() {
   declarations: [
     AppComponent,
     MenuComponent,
-    PlushComponent,
-    SettingsComponent
+    SettingsComponent,
+    SettingsClawMachineComponent,
+    PlushComponent
   ],
   imports: [
     BrowserModule,
@@ -72,8 +78,10 @@ export function highchartsFactory() {
 
   ],
   providers: [
-    PlushService,
+    HttpBananaSenderService,
     ContextService,
+    ClawMachineService,
+    PlushService,
     {
       provide: HighchartsStatic,
       useFactory: highchartsFactory
