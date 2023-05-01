@@ -2,7 +2,7 @@
   "name": "dto",
   "version": "1.0.0",
   "description": "builder for ts and protobuf",
-  "main": "index.js",
+  "main": "target/ts/messages.ts",
   "author": "samak",
   "license": "ISC",
   "dependencies": {
