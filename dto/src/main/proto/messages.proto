@@ -10,3 +10,11 @@ message ClawMachine {
   string name = 2;
   int32 order = 3;
 }
+
+message ClawMachineIdentifier {
+  string id = 1;
+}
+
+message ClawMachineIdentifiers {
+  repeated string ids = 1;
+}

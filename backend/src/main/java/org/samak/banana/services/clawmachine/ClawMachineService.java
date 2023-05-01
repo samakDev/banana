@@ -4,8 +4,10 @@ import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.repository.ClawMachineRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ClawMachineService implements IClawMachineService {
@@ -26,5 +28,12 @@ public class ClawMachineService implements IClawMachineService {
         }
 
         return clawMachineRepository.save(entity).getId();
+    }
+
+    @Override
+    public List<UUID> getAll() {
+        return StreamSupport.stream(clawMachineRepository.findAll().spliterator(), false)
+                .map(ClawMachineEntity::getId)
+                .toList();
     }
 }
