@@ -1,0 +1,11 @@
+{
+  "name": "dto",
+  "version": "1.0.0",
+  "description": "builder for ts and protobuf",
+  "main": "index.js",
+  "author": "samak",
+  "license": "ISC",
+  "dependencies": {
+    "ts-proto": "^1.146.0"
+  }
+}

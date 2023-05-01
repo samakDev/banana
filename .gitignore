@@ -49,6 +49,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+/dto/dto
 frontend/src/main/frontend/node
 /bin/
 node_modules/
