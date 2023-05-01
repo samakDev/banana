@@ -1,5 +1,6 @@
 package org.samak.banana.services.clawmachine;
 
+import org.apache.logging.log4j.util.Strings;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.repository.ClawMachineRepository;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class ClawMachineService implements IClawMachineService {
         final ClawMachineEntity entity = new ClawMachineEntity();
         entity.setName(name);
 
-        if (Objects.nonNull(order)) {
-            entity.setOrder(order);
+        if (Objects.isNull(order)) {
+            entity.setOrder(Integer.MAX_VALUE);
         }
 
         return clawMachineRepository.save(entity).getId();
@@ -41,5 +42,29 @@ public class ClawMachineService implements IClawMachineService {
     @Override
     public Optional<ClawMachineEntity> getClawMachine(final UUID clawMachineId) {
         return clawMachineRepository.findById(clawMachineId);
+    }
+
+    @Override
+    public Optional<ClawMachineEntity> updateClawMachine(final UUID clawMachineId, final String name, final Integer order) {
+        final Optional<ClawMachineEntity> clawMachineOpt = getClawMachine(clawMachineId);
+
+        if (clawMachineOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return clawMachineOpt
+                .map(clawMachineEntity -> {
+                    Optional.ofNullable(name)
+                            .map(String::trim)
+                            .filter(tempName -> !Strings.isBlank(tempName))
+                            .ifPresent(clawMachineEntity::setName);
+
+                    if (Objects.nonNull(order) && order != clawMachineEntity.getOrder()) {
+                        clawMachineEntity.setOrder(order);
+                    }
+
+                    return clawMachineEntity;
+                })
+                .map(clawMachineRepository::save);
     }
 }

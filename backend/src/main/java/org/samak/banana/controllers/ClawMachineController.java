@@ -5,6 +5,7 @@ import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.ClawMachine;
 import org.samak.banana.dto.ClawMachineIdentifier;
 import org.samak.banana.dto.ClawMachineIdentifiers;
+import org.samak.banana.dto.ClawMachineUpdater;
 import org.samak.banana.mapper.ClawMachineMapper;
 import org.samak.banana.services.clawmachine.ClawMachineService;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +48,8 @@ public class ClawMachineController {
             throw new IllegalArgumentException("Name required");
         }
 
-        final UUID clawId = clawMachineService.create(clawMachine.getName(), clawMachine.getOrder());
+        final Integer order = clawMachine.hasOrder() ? clawMachine.getOrder() : null;
+        final UUID clawId = clawMachineService.create(clawMachine.getName(), order);
 
         final ClawMachineIdentifier identifier = ClawMachineIdentifier.newBuilder()
                 .setId(clawId.toString())
@@ -74,9 +77,26 @@ public class ClawMachineController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClawMachine> getClawMachine(@PathVariable("id") final UUID clawMachineId) {
-        LOGGER.info("ClawMachineController.getAll");
+        LOGGER.info("ClawMachineController.get ClawMachine with id: {}", clawMachineId);
 
         final ClawMachine clawMachine = clawMachineService.getClawMachine(clawMachineId)
+                .map(CLAW_MACHINE_MAPPER::convertClawMachineEntityToDto)
+                .orElseThrow(() -> new IllegalArgumentException("not ClawMachine found for this id"));
+
+        return ResponseEntity.ok(clawMachine);
+    }
+
+    @PatchMapping(value = "/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ClawMachine> updateClawMachine(@PathVariable("id") final UUID clawMachineId,
+                                                         @RequestBody() final ClawMachineUpdater clawMachineUpdater) {
+        LOGGER.info("ClawMachineController.update ClawMachine with id {}, and new value {}", clawMachineId, clawMachineUpdater);
+
+        final String name = clawMachineUpdater.hasName() ? clawMachineUpdater.getName() : null;
+        final int order = clawMachineUpdater.hasOrder() ? clawMachineUpdater.getOrder() : null;
+
+        final ClawMachine clawMachine = clawMachineService.updateClawMachine(clawMachineId, name, order)
                 .map(CLAW_MACHINE_MAPPER::convertClawMachineEntityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("not ClawMachine found for this id"));
 

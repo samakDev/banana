@@ -12,4 +12,6 @@ public interface IClawMachineService {
     List<UUID> getAll();
 
     Optional<ClawMachineEntity> getClawMachine(UUID clawMachineId);
+
+    Optional<ClawMachineEntity> updateClawMachine(UUID clawMachineId, String name, Integer order);
 }

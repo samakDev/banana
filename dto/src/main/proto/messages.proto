@@ -8,7 +8,7 @@ package org.samak.banana.dto;
 message ClawMachine {
   string id = 1; // UUID format
   string name = 2;
-  int32 order = 3;
+  optional int32 order = 3;
 }
 
 message ClawMachineIdentifier {
@@ -17,4 +17,9 @@ message ClawMachineIdentifier {
 
 message ClawMachineIdentifiers {
   repeated string ids = 1;
+}
+
+message ClawMachineUpdater {
+  optional string name = 1;
+  optional int32 order = 2;
 }

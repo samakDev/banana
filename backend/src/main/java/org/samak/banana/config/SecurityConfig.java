@@ -29,6 +29,8 @@ public class SecurityConfig {
                 .requestMatchers(WebSocketBrokerConfiguration.ENDPOINT_PREFIX).permitAll()
                 .requestMatchers(HttpMethod.POST, "/").permitAll()
                 .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
                 .anyRequest()
