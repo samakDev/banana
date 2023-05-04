@@ -1,33 +1,36 @@
-import {Component} from '@angular/core';
-import {ClawMachineService} from "../../../services/claw.machine.service";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {SettingsContentDirective} from "./settings.content.directive";
+import {
+  SettingsClawMachineCreateComponent
+} from "./settings-claw-machine-create/settings-claw-machine-create.component";
+import {
+  SettingsClawMachineUpdateComponent
+} from "./settings-claw-machine-update/settings-claw-machine-update.component";
 
 @Component({
   selector: 'app-settings-claw-machine',
   templateUrl: './settings-claw-machine.component.html',
   styleUrls: ['./settings-claw-machine.component.css']
 })
-export class SettingsClawMachineComponent {
-  clawMachineName: string;
-  clawMachineOrder: number;
-  responseSuccess: Boolean = undefined;
-  responseText: String;
+export class SettingsClawMachineComponent implements OnInit {
+  @ViewChild(SettingsContentDirective, {static: true}) settingsContent!: SettingsContentDirective;
 
-  constructor(private clawMachineService: ClawMachineService) {
+  currentTab: String = 'create';
+
+  ngOnInit(): void {
+    this.settingsContent.viewContainerRef.createComponent<any>(SettingsClawMachineCreateComponent);
   }
 
-  sendCreateClawMachine(event: any) {
-    this.responseSuccess = undefined;
-    this.clawMachineService.sendCreateClawMachineCmd(this.clawMachineName, this.clawMachineOrder)
-      .subscribe({
-        next: identifier => {
-          this.responseSuccess = true;
-          this.responseText = "settings-claw-machine_new-claw-machine-created-success"
-        },
-        error: e => {
-          this.responseSuccess = false;
-          this.responseText = "settings-claw-machine_new-claw-machine-created-error"
-          console.error('error while sending post request : ', e);
-        }
-      })
+  setActiveTab(newTab: string) {
+    this.currentTab = newTab;
+
+    const viewContainerRef = this.settingsContent.viewContainerRef;
+    viewContainerRef.clear();
+
+    const component = (newTab === 'create')
+      ? SettingsClawMachineCreateComponent
+      : SettingsClawMachineUpdateComponent;
+
+    viewContainerRef.createComponent<any>(component);
   }
 }

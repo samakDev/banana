@@ -9,12 +9,15 @@
   "en": "Anglais",
   "fr": "Français",
   "settings_fullScreen": "Plein écran (CTRL + SIFT + F)",
-  "settings-claw-machine_create-new-claw_machine-title": "Création d'une machine à pince",
-  "settings-claw-machine_new-claw-machine-name-label": "Nom de la machine",
-  "settings-claw-machine_new-claw-machine-name-placeholder": "nom par defaut a saisir",
-  "settings-claw-machine_new-claw-machine-order-label": "Ordre d'affichage de la machine",
-  "settings-claw-machine_new-claw-machine-order-placeholder": "5",
-  "settings-claw-machine_create-claw-machine-button-label": "Creer",
-  "settings-claw-machine_new-claw-machine-created-success": "Machine à pince créée",
-  "settings-claw-machine_new-claw-machine-created-error": "Erreur lors de la création"
+  "settings-claw-machine_title": "Paramètre pour les machines à pince",
+  "settings-claw-machine_create_link": "Créer",
+  "settings-claw-machine_update_link": "Mettre à jour",
+  "settings-claw-machine-create_create-new-claw_machine-title": "Création d'une machine à pince",
+  "settings-claw-machine-create_new-claw-machine-name-label": "Nom de la machine",
+  "settings-claw-machine-create_new-claw-machine-name-placeholder": "nom par defaut a saisir",
+  "settings-claw-machine-create_new-claw-machine-order-label": "Ordre d'affichage de la machine",
+  "settings-claw-machine-create_new-claw-machine-order-placeholder": "5",
+  "settings-claw-machine-create_create-claw-machine-button-label": "Creer",
+  "settings-claw-machine-create_new-claw-machine-created-success": "Machine à pince créée",
+  "settings-claw-machine-create_new-claw-machine-created-error": "Erreur lors de la création"
 }

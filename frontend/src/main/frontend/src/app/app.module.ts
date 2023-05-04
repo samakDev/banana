@@ -10,21 +10,28 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {LocalStorageModule, LocalStorageService} from 'angular-2-local-storage';
 import {HotkeyModule} from 'angular2-hotkeys';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {AppComponent} from './app.component';
-import {MenuComponent} from './components/menu/menu.component';
-import {PlushComponent} from './components/plush/plush.component';
-import {SettingsComponent} from './components/settings/settings.component';
 import {ContextService} from './services/context.service';
 import {PlushService} from './services/plush.service';
 import {RxStompService} from "./services/stomp/rx-stomp.service";
 import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
 import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
+import {HttpBananaSenderService} from "./services/http.banana.sender.service";
+import {ClawMachineService} from "./services/claw.machine.service";
+import {AppComponent} from './app.component';
+import {MenuComponent} from './components/menu/menu.component';
+import {PlushComponent} from './components/plush/plush.component';
+import {SettingsComponent} from './components/settings/settings.component';
 import {
   SettingsClawMachineComponent
 } from './components/settings/settings-claw-machine/settings-claw-machine.component';
-import {ClawMachineService} from "./services/claw.machine.service";
-import {HttpBananaSenderService} from "./services/http.banana.sender.service";
+import {
+  SettingsClawMachineCreateComponent
+} from './components/settings/settings-claw-machine/settings-claw-machine-create/settings-claw-machine-create.component';
+import {
+  SettingsClawMachineUpdateComponent
+} from './components/settings/settings-claw-machine/settings-claw-machine-update/settings-claw-machine-update.component';
+import {SettingsContentDirective} from "./components/settings/settings-claw-machine/settings.content.directive";
 
 declare var require: any;
 
@@ -49,11 +56,14 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
+    SettingsContentDirective,
     AppComponent,
     MenuComponent,
+    PlushComponent,
     SettingsComponent,
     SettingsClawMachineComponent,
-    PlushComponent
+    SettingsClawMachineCreateComponent,
+    SettingsClawMachineUpdateComponent
   ],
   imports: [
     BrowserModule,
