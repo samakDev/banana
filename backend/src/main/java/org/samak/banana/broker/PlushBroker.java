@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class PlushBroker {
-    public static final UUID DEFAULT_SESSION_ID = UUID.fromString("00000000-0000-0000-0000-00000000000");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushBroker.class);
 
@@ -40,11 +39,11 @@ public class PlushBroker {
                 .observeOn(Schedulers.io())
                 .subscribe(state -> {
                     LOGGER.info("Send state : {}", state);
-                    this.messagingTemplate.convertAndSend("/plush/states", state);
+                    this.messagingTemplate.convertAndSend("/banana/plush/states", state);
                 }, RxUtils.logError(LOGGER));
 
         listeningMap.compute(sessionId, (k, v) -> {
-            if (DEFAULT_SESSION_ID.equals(k)) {
+            if (WebSocketEventListener.DEFAULT_SESSION_ID.equals(k)) {
                 listeningMap.remove(k).dispose();
             }
 
