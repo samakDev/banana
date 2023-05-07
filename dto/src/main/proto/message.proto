@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package org.samak.banana.dto;
+
+import "model.proto";
+
+message ClawMachineEvent {
+  oneof event {
+    CurrentStateClawMachineEvent currentStateClawMachineEvent = 1;
+    CreatedClawMachineEvent createClawMachineEvent = 2;
+    UpdatedClawMachineEvent updatedClawMachineEvent = 3;
+    DeletedClawMachineEvent deletedClawMachineEvent = 4;
+  }
+}
+
+message CurrentStateClawMachineEvent {
+  repeated ClawMachine clawMachines = 1;
+}
+
+message CreatedClawMachineEvent {
+  ClawMachine clawMachine = 1;
+}
+
+message UpdatedClawMachineEvent {
+  ClawMachine clawMachine = 1;
+}
+
+message DeletedClawMachineEvent {
+  string clawMachineId = 1;
+}

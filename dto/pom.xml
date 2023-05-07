@@ -171,10 +171,12 @@
                                 <!-- Generation for TS -->
                                 <exec executable="${folder.proto.executable}${proto.executable.name}"
                                       failonerror="true">
-                                    <arg value="--plugin=protoc-gen-ts_proto=${basedir}/node_modules/.bin/protoc-gen-ts_proto.cmd"/>
                                     <arg value="--proto_path=${basedir}/${folder.proto.source}"/>
                                     <arg value="--proto_path=${folder_proto_files}"/>
+                                    <arg value="--plugin=protoc-gen-ts_proto=${basedir}/node_modules/.bin/protoc-gen-ts.cmd"/>
                                     <arg value="--ts_proto_out=${folder.ts.generated-sources}"/>
+                                    <arg value="--plugin=protoc-gen-js=${basedir}/node_modules/.bin/protoc-gen-js.cmd"/>
+                                    <arg value="--js_out=import_style=commonjs,binary:./target/ts"/>
                                     <arg line="${proto.files}"/>
                                 </exec>
                             </target>

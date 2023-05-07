@@ -2,10 +2,10 @@
   "name": "dto",
   "version": "1.0.0",
   "description": "builder for ts and protobuf",
-  "main": "target/ts/messages.ts",
   "author": "samak",
   "license": "ISC",
   "dependencies": {
-    "ts-proto": "^1.146.0"
+    "protoc-gen-js": "^3.21.2",
+    "ts-protoc-gen": "^0.15.0"
   }
 }
