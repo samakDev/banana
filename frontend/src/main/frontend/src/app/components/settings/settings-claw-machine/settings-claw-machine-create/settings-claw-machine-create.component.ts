@@ -8,8 +8,6 @@ import {ClawMachineModel} from "../../../../models/Claw.machine.model";
   styleUrls: ['./settings-claw-machine-create.component.css']
 })
 export class SettingsClawMachineCreateComponent {
-  clawMachineName: string;
-  clawMachineOrder: number;
   responseSuccess: Boolean = undefined;
   responseText: String;
 
@@ -22,14 +20,13 @@ export class SettingsClawMachineCreateComponent {
       .subscribe({
         next: identifier => {
           this.responseSuccess = true;
-          this.responseText = "settings-claw-machine_new-claw-machine-created-success"
+          this.responseText = "settings-claw-machine-create_created-success"
         },
         error: e => {
           this.responseSuccess = false;
-          this.responseText = "settings-claw-machine_new-claw-machine-created-error"
+          this.responseText = "settings-claw-machine-create_created-error"
           console.error('error while sending post request : ', e);
         }
       })
   }
-
 }

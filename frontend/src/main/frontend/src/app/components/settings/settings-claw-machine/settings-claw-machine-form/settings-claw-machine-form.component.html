@@ -1,0 +1,44 @@
+<form (ngSubmit)="onSubmit()" #form="ngForm">
+  <div class="mb-3">
+    <label for="clawMachineName"
+           class="form-label"
+           translate="settings-claw-machine-form_claw-machine-name-label"></label>
+
+    <input type="text"
+           id="clawMachineName"
+           class="form-control"
+           name="clawMachineName"
+           [(ngModel)]="clawMachineUpdated.name"
+           required
+           placeholder="{{ 'settings-claw-machine-form_claw-machine-name-placeholder' | translate }}"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="clawMachineOrder"
+           class="form-label"
+           translate="settings-claw-machine-form_claw-machine-order-label"></label>
+
+    <input type="number"
+           id="clawMachineOrder"
+           class="form-control"
+           name="clawMachineOrder"
+           [(ngModel)]="clawMachineUpdated.order"
+           placeholder="{{ 'settings-claw-machine-form_claw-machine-order-placeholder' | translate }}"/>
+  </div>
+
+  <div style="height: 1.5em" class="mb-3">
+    <div class="float-end">
+      <button type="button"
+              *ngIf="isDeletable"
+              (click)="sendDeleteAction(clawMachineInput.id)"
+              class="btn btn-danger me-3"
+              translate="settings-claw-machine-form_delete-claw-machine-button-label"></button>
+
+      <button type="submit"
+              class="btn btn-primary "
+              [disabled]="form.invalid">
+        {{ buttonLabel | translate }}
+      </button>
+    </div>
+  </div>
+</form>
