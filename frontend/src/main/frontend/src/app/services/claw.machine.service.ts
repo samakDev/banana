@@ -1,22 +1,15 @@
 import {Injectable} from '@angular/core';
-// @ts-ignore
-import {ClawMachine, ClawMachineIdentifier} from 'dto';
-import {HttpBananaSenderService} from "./http.banana.sender.service";
-import {map, Observable} from "rxjs";
+import {HttpBananaClawMachineSenderService} from "./http-banana-claw-machine-sender.service";
+import {ClawMachineModel} from "../models/claw.machine.model";
 
 @Injectable()
 export class ClawMachineService {
 
-  constructor(private httpBananaSenderService: HttpBananaSenderService) {
+  constructor(private httpBananaSenderService: HttpBananaClawMachineSenderService) {
   }
 
-  public sendCreateClawMachineCmd(clawMachineName: string, order: number): Observable<ClawMachineIdentifier> {
-    const clawMachine: ClawMachine = {
-      name: clawMachineName,
-      order: order
-    };
-
-    return this.httpBananaSenderService.sendJsonCmd(JSON.stringify(clawMachine))
+  public sendCreateClawMachineCmd(clawMachine: ClawMachineModel): Observable<ClawMachineIdentifier> {
+    return this.httpBananaSenderService.sendCreateClawMachineCmd(clawMachine)
       .pipe(map(response => <ClawMachineIdentifier>response));
   }
 }

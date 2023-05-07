@@ -16,7 +16,7 @@ import {RxStompService} from "./services/stomp/rx-stomp.service";
 import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
 import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
-import {HttpBananaSenderService} from "./services/http.banana.sender.service";
+import {HttpBananaClawMachineSenderService} from "./services/http-banana-claw-machine-sender.service";
 import {ClawMachineService} from "./services/claw.machine.service";
 import {AppComponent} from './app.component';
 import {MenuComponent} from './components/menu/menu.component';
@@ -32,6 +32,9 @@ import {
   SettingsClawMachineUpdateComponent
 } from './components/settings/settings-claw-machine/settings-claw-machine-update/settings-claw-machine-update.component';
 import {SettingsContentDirective} from "./components/settings/settings-claw-machine/settings.content.directive";
+import {
+  SettingsClawMachineFormComponent
+} from './components/settings/settings-claw-machine/settings-claw-machine-form/settings-claw-machine-form.component';
 
 declare var require: any;
 
@@ -63,7 +66,8 @@ export function highchartsFactory() {
     SettingsComponent,
     SettingsClawMachineComponent,
     SettingsClawMachineCreateComponent,
-    SettingsClawMachineUpdateComponent
+    SettingsClawMachineUpdateComponent,
+    SettingsClawMachineFormComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +92,7 @@ export function highchartsFactory() {
 
   ],
   providers: [
-    HttpBananaSenderService,
+    HttpBananaClawMachineSenderService,
     ContextService,
     ClawMachineService,
     PlushService,

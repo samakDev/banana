@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ClawMachineService} from "../../../../services/claw.machine.service";
+import {ClawMachineModel} from "../../../../models/Claw.machine.model";
 
 @Component({
   selector: 'app-settings-claw-machine-created',
@@ -15,9 +16,9 @@ export class SettingsClawMachineCreateComponent {
   constructor(private clawMachineService: ClawMachineService) {
   }
 
-  sendCreateClawMachine(event: any) {
+  sendCreateClawMachine(clawMachinedEdited: ClawMachineModel): void {
     this.responseSuccess = undefined;
-    this.clawMachineService.sendCreateClawMachineCmd(this.clawMachineName, this.clawMachineOrder)
+    this.clawMachineService.sendCreateClawMachineCmd(clawMachinedEdited)
       .subscribe({
         next: identifier => {
           this.responseSuccess = true;
