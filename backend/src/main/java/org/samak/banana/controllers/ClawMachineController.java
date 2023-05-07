@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,5 +102,14 @@ public class ClawMachineController {
                 .orElseThrow(() -> new IllegalArgumentException("not ClawMachine found for this id"));
 
         return ResponseEntity.ok(clawMachine);
+    }
+
+    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteClawMachine(@PathVariable("id") final UUID clawMachineId) {
+        LOGGER.info("ClawMachineController.delete ClawMachine with id {}", clawMachineId);
+
+        clawMachineService.deleteClawMachine(clawMachineId);
+
+        return ResponseEntity.noContent().build();
     }
 }

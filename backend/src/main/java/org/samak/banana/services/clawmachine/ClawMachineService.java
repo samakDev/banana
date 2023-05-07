@@ -69,4 +69,9 @@ public class ClawMachineService implements IClawMachineService {
                 })
                 .map(clawMachineRepository::save);
     }
+
+    @Override
+    public void deleteClawMachine(final UUID clawMachineId) {
+        clawMachineRepository.deleteById(clawMachineId);
+    }
 }

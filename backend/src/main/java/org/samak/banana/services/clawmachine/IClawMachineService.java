@@ -14,4 +14,6 @@ public interface IClawMachineService {
     Optional<ClawMachineEntity> getClawMachine(UUID clawMachineId);
 
     Optional<ClawMachineEntity> updateClawMachine(UUID clawMachineId, String name, Integer order);
+
+    void deleteClawMachine(UUID clawMachineId);
 }
