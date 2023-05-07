@@ -35,13 +35,15 @@ import {SettingsContentDirective} from "./components/settings/settings-claw-mach
 import {
   SettingsClawMachineFormComponent
 } from './components/settings/settings-claw-machine/settings-claw-machine-form/settings-claw-machine-form.component';
+import {NameService} from "./services/name.service";
+import {ClawMachineComponent} from './components/claw-machine/claw-machine.component';
 
 declare var require: any;
 
 const appRoutes: Routes = [
-  {path: 'plush', component: PlushComponent},
   {path: 'settings', component: SettingsComponent},
-  {path: '*', redirectTo: '/plush', pathMatch: 'full'},
+  {path: 'claw-machine/:id', component: ClawMachineComponent},
+  {path: '**', redirectTo: 'settings', pathMatch: 'full'},
 ];
 
 
@@ -67,7 +69,8 @@ export function highchartsFactory() {
     SettingsClawMachineComponent,
     SettingsClawMachineCreateComponent,
     SettingsClawMachineUpdateComponent,
-    SettingsClawMachineFormComponent
+    SettingsClawMachineFormComponent,
+    ClawMachineComponent
   ],
   imports: [
     BrowserModule,
@@ -96,6 +99,7 @@ export function highchartsFactory() {
     ContextService,
     ClawMachineService,
     PlushService,
+    NameService,
     {
       provide: HighchartsStatic,
       useFactory: highchartsFactory

@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light" *ngIf="!isFullScreen">
-  <a class="navbar-brand" ui-sref="graph">
+  <a class="navbar-brand" ui-sref="graph" routerLink="/">
     <label>
       <img style="max-width: 50px" src="/assets/minion.png" alt="Banana icon">
       Banana
@@ -9,25 +9,30 @@
   <button class="navbar-toggler"
           type="button"
           (click)="isCollapsed = !isCollapsed"
-          [attr.aria-expanded]="!isCollapsed"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation">
+          [attr.aria-expanded]="!isCollapsed">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div id="navbarSupportedContent"
-       class="collapse navbar-collapse"
+  <div class="collapse navbar-collapse"
        [ngbCollapse]="isCollapsed">
 
+    <div>
+      <div class="input-group">
+        <span class="input-group-text" translate="yourname"></span>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="memberName"
+               (ngModelChange)="onMemberNameChange()">
+      </div>
+    </div>
+
     <ul class="navbar-nav w-100">
-      <li class="nav-item">
+      <li class="nav-item" *ngFor="let clawMachine of clawMachines">
         <a class="nav-link"
-           routerLink="/plush"
-           routerLinkActive="active"
-           translate="plush"></a>
+           routerLink="/claw-machine/{{clawMachine.id}}"
+           routerLinkActive="active">
+          {{ clawMachine.name }}
+        </a>
       </li>
     </ul>
 

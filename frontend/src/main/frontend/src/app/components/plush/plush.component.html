@@ -1,20 +1,12 @@
-<div class="container" *ngIf="!isFullScreen">
-  <div class="form-group">
-    <label translate>yourname</label>
-
-    <input type="text"
-           class="form-control"
-           maxlength="50"
-           [(ngModel)]="memberName"
-           (ngModelChange)="onMemberNameChange()">
-  </div>
-</div>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-6 col-md-4  alert"
          *ngFor="let state of plushs"
-         [ngClass]="{'alert-info': !state.owner, 'alert-success': (state.owner != null && state.owner.id === memberId), 'alert-danger':(state.owner != null && state.owner.id != memberId)}"
+         [ngClass]="{
+            'alert-info': !state.owner,
+            'alert-success': (state.owner != null && state.owner.id === memberId),
+            'alert-danger':(state.owner != null && state.owner.id != memberId)
+            }"
          role="alert">
 
       <h1>{{state.plush.name}}</h1>
