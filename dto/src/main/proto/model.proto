@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 
+import "google/protobuf/timestamp.proto";
+
 package org.samak.banana.dto.model;
 
 message ClawMachine {
@@ -21,4 +23,27 @@ message ClawMachineIdentifiers {
 message ClawMachineUpdater {
   optional string name = 1;
   optional int32 order = 2;
+}
+
+enum PlushState {
+  FREE = 0;
+  TAKEN = 1;
+}
+
+message Plush {
+  optional string id = 1;
+  string name = 2;
+  optional string imageAbsolutePath = 3;
+  optional int32 order = 4;
+  PlushState state = 5;
+  optional PlushLocker plushLocker = 6;
+}
+
+message PlushLocker {
+  string name = 1;
+  google.protobuf.Timestamp since = 2;
+}
+
+message PlushIdentifier {
+  string id = 1;
 }
