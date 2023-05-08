@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 
-package org.samak.banana.dto;
+package org.samak.banana.dto.message;
 
 import "model.proto";
 
@@ -16,15 +16,15 @@ message ClawMachineEvent {
 }
 
 message CurrentStateClawMachineEvent {
-  repeated ClawMachine clawMachines = 1;
+  repeated org.samak.banana.dto.model.ClawMachine clawMachines = 1;
 }
 
 message CreatedClawMachineEvent {
-  ClawMachine clawMachine = 1;
+  org.samak.banana.dto.model.ClawMachine clawMachine = 1;
 }
 
 message UpdatedClawMachineEvent {
-  ClawMachine clawMachine = 1;
+  org.samak.banana.dto.model.ClawMachine clawMachine = 1;
 }
 
 message DeletedClawMachineEvent {

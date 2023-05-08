@@ -1,7 +1,7 @@
 package org.samak.banana.services.clawmachine;
 
 import io.reactivex.Observable;
-import org.samak.banana.dto.ClawMachineEvent;
+import org.samak.banana.dto.message.ClawMachineEvent;
 import org.samak.banana.entity.ClawMachineEntity;
 
 import java.util.List;

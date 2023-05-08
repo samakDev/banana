@@ -2,10 +2,10 @@ package org.samak.banana.controllers;
 
 import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.factory.Mappers;
-import org.samak.banana.dto.ClawMachine;
-import org.samak.banana.dto.ClawMachineIdentifier;
-import org.samak.banana.dto.ClawMachineIdentifiers;
-import org.samak.banana.dto.ClawMachineUpdater;
+import org.samak.banana.dto.model.ClawMachine;
+import org.samak.banana.dto.model.ClawMachineIdentifier;
+import org.samak.banana.dto.model.ClawMachineIdentifiers;
+import org.samak.banana.dto.model.ClawMachineUpdater;
 import org.samak.banana.mapper.ClawMachineMapper;
 import org.samak.banana.services.clawmachine.ClawMachineService;
 import org.slf4j.Logger;

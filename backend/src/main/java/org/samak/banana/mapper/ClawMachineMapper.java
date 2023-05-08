@@ -1,7 +1,7 @@
 package org.samak.banana.mapper;
 
 import org.mapstruct.Mapper;
-import org.samak.banana.dto.ClawMachine;
+import org.samak.banana.dto.model.ClawMachine;
 import org.samak.banana.entity.ClawMachineEntity;
 
 @Mapper
