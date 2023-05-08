@@ -110,6 +110,11 @@ public class PlushService implements IPlushService {
     }
 
     @Override
+    public void delete(final UUID plushId) {
+        plushRepository.deleteById(plushId);
+    }
+
+    @Override
     public boolean release(final User user, final String plushId) {
         final PlushState state = plushStates.get(plushId);
 

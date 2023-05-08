@@ -35,4 +35,6 @@ public interface IPlushService {
     InputStream getPlushImg(PlushEntity plushEntity) throws FileNotFoundException;
 
     boolean take(UUID plushId, final PlushEntity plushEntity, String lockerName, final OffsetDateTime lockDate);
+
+    void delete(UUID plushId);
 }

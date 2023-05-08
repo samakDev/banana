@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -217,6 +218,22 @@ public class PlushController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<Void> deletePlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
+                                            @PathVariable("id") final UUID plushId) {
+        LOGGER.info("PlushController.delete {} for clawMachine {}", plushId, clawMachineId);
+
+        final Optional<ClawMachineEntity> clawMachineOpt = clawMachineService.getClawMachine(clawMachineId);
+
+        if (clawMachineOpt.isEmpty()) {
+            throw new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId);
+        }
+
+        plushService.delete(plushId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "/release/{key}")
