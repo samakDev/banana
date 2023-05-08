@@ -104,7 +104,7 @@ public class ClawMachineController {
         return ResponseEntity.ok(clawMachine);
     }
 
-    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteClawMachine(@PathVariable("id") final UUID clawMachineId) {
         LOGGER.info("ClawMachineController.delete ClawMachine with id {}", clawMachineId);
 
