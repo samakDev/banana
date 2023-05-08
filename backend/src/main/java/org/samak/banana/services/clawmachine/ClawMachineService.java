@@ -16,6 +16,7 @@ import org.samak.banana.mapper.ClawMachineMapper;
 import org.samak.banana.repository.ClawMachineRepository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -69,7 +70,7 @@ public class ClawMachineService implements IClawMachineService {
     }
 
     @Override
-    public Optional<ClawMachineEntity> updateClawMachine(final UUID clawMachineId, final String name, final Integer order) {
+    public Optional<ClawMachineEntity> updateClawMachine(final UUID clawMachineId, @Nullable final String name, @Nullable final Integer order) {
         final Optional<ClawMachineEntity> clawMachineOpt = getClawMachine(clawMachineId);
 
         return clawMachineOpt
