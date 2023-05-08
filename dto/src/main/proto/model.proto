@@ -47,3 +47,7 @@ message PlushLocker {
 message PlushIdentifier {
   string id = 1;
 }
+
+message Plushes {
+  repeated Plush plush = 1;
+}

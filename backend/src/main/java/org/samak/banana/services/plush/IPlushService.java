@@ -5,6 +5,7 @@ import io.reactivex.Observable;
 import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
 import org.samak.banana.entity.ClawMachineEntity;
+import org.samak.banana.entity.PlushEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
@@ -26,4 +27,6 @@ public interface IPlushService {
 
 
     UUID create(ClawMachineEntity clawMachineEntity, String name, @Nullable Integer order, MultipartFile plushImg);
+
+    List<PlushEntity> getAll(ClawMachineEntity clawMachineEntity);
 }

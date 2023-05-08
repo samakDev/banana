@@ -27,7 +27,6 @@ import java.util.UUID;
 
 @Service
 public class PlushService implements IPlushService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushService.class);
 
     private final Map<String, PlushState> plushStates = new HashMap<>();
@@ -70,6 +69,11 @@ public class PlushService implements IPlushService {
         final PlushEntity saved = plushRepository.save(entity);
 
         return saved.getId();
+    }
+
+    @Override
+    public List<PlushEntity> getAll(final ClawMachineEntity clawMachineEntity) {
+        return plushRepository.findAllByClawMachine(clawMachineEntity);
     }
 
     @Override

@@ -1,11 +1,14 @@
 package org.samak.banana.controllers;
 
 import org.apache.logging.log4j.util.Strings;
+import org.mapstruct.factory.Mappers;
 import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
+import org.samak.banana.dto.model.Plushes;
 import org.samak.banana.entity.ClawMachineEntity;
+import org.samak.banana.mapper.PlushMapper;
 import org.samak.banana.services.clawmachine.IClawMachineService;
 import org.samak.banana.services.plush.IPlushService;
 import org.slf4j.Logger;
@@ -21,13 +24,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/claw-machine/{claw-machine-id}/plush")
+@RequestMapping("/api/claw-machine/{claw-machine-id}/plushes")
 public class PlushController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushController.class);
+    private static final PlushMapper PLUSH_MAPPER = Mappers.getMapper(PlushMapper.class);
 
     private final IClawMachineService clawMachineService;
     private final IPlushService plushService;
@@ -65,6 +71,29 @@ public class PlushController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(identifier);
+    }
+
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Plushes> getAll(@PathVariable("claw-machine-id") final UUID clawMachineId) {
+        LOGGER.info("PlushController.getAll for clawMachine {}", clawMachineId);
+
+        final Optional<ClawMachineEntity> clawMachineOpt = clawMachineService.getClawMachine(clawMachineId);
+
+        if (clawMachineOpt.isEmpty()) {
+            throw new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId);
+        }
+
+        final List<Plush> plusheList = plushService.getAll(clawMachineOpt.get())
+                .stream()
+                .map(PLUSH_MAPPER::convertPlushEntityToDto)
+                .filter(Objects::nonNull)
+                .toList();
+
+        final Plushes plushes = Plushes.newBuilder()
+                .addAllPlush(plusheList)
+                .build();
+
+        return ResponseEntity.ok(plushes);
     }
 
     @PostMapping(value = "/take/{key}")
