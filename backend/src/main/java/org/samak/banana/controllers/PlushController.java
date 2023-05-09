@@ -34,6 +34,7 @@ import java.util.UUID;
 public class PlushController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushController.class);
     private static final PlushMapper PLUSH_MAPPER = Mappers.getMapper(PlushMapper.class);
+    private static final List<String> IMAGE_CONTENT_TYPE_ALLOWED = Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
 
     private final IClawMachineService clawMachineService;
     private final IPlushService plushService;
@@ -50,6 +51,11 @@ public class PlushController {
                                                   @RequestParam("metadata") final Plush plush,
                                                   @RequestParam("plushImg") final MultipartFile plushImg) {
         LOGGER.info("PlushController.create {} for clawMachine {}", plush, clawMachineId);
+
+
+        if (!IMAGE_CONTENT_TYPE_ALLOWED.contains(plushImg.getContentType())) {
+            throw new IllegalArgumentException("image format not supported. Expected format : " + IMAGE_CONTENT_TYPE_ALLOWED);
+        }
 
         if (Strings.isBlank(plush.getName())) {
             throw new IllegalArgumentException("Name and Image are required");
@@ -83,14 +89,14 @@ public class PlushController {
             throw new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId);
         }
 
-        final List<Plush> plusheList = plushService.getAll(clawMachineOpt.get())
+        final List<Plush> plushList = plushService.getAll(clawMachineOpt.get())
                 .stream()
                 .map(PLUSH_MAPPER::convertPlushEntityToDto)
                 .filter(Objects::nonNull)
                 .toList();
 
         final Plushes plushes = Plushes.newBuilder()
-                .addAllPlush(plusheList)
+                .addAllPlush(plushList)
                 .build();
 
         return ResponseEntity.ok(plushes);
