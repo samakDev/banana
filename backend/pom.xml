@@ -80,6 +80,12 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
+        <!-- Common IO -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <!-- JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

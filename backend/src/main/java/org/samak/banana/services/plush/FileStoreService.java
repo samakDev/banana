@@ -4,6 +4,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -34,5 +36,10 @@ public class FileStoreService implements IFileStoreService {
         Files.write(fileAbsolutePath, fileContent.readAllBytes());
 
         return fileAbsolutePath.toAbsolutePath().toString();
+    }
+
+    @Override
+    public InputStream fetch(final String imageAbsolutePath) throws FileNotFoundException {
+        return new FileInputStream(imageAbsolutePath);
     }
 }

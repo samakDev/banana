@@ -9,6 +9,8 @@ import org.samak.banana.entity.PlushEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,4 +31,8 @@ public interface IPlushService {
     UUID create(ClawMachineEntity clawMachineEntity, String name, @Nullable Integer order, MultipartFile plushImg);
 
     List<PlushEntity> getAll(ClawMachineEntity clawMachineEntity);
+
+    Optional<PlushEntity> getPlushMetadata(UUID plushId);
+
+    InputStream getPlushImg(PlushEntity plushEntity) throws FileNotFoundException;
 }

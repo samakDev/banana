@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +76,16 @@ public class PlushService implements IPlushService {
     @Override
     public List<PlushEntity> getAll(final ClawMachineEntity clawMachineEntity) {
         return plushRepository.findAllByClawMachine(clawMachineEntity);
+    }
+
+    @Override
+    public Optional<PlushEntity> getPlushMetadata(final UUID plushId) {
+        return plushRepository.findById(plushId);
+    }
+
+    @Override
+    public InputStream getPlushImg(final PlushEntity plushEntity) throws FileNotFoundException {
+        return fileStoreService.fetch(plushEntity.getImageAbsolutePath());
     }
 
     @Override
