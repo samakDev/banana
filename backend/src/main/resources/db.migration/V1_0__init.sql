@@ -14,7 +14,7 @@ create table plush
     number              int,
     state               enum ('FREE', 'TAKEN') not null,
 
-    foreign key (claw_machine_id) references claw_machine (id)
+    foreign key (claw_machine_id) references claw_machine (id) ON DELETE CASCADE
 );
 
 create table plush_locker
@@ -25,5 +25,5 @@ create table plush_locker
     lock_date   TIMESTAMP WITH TIME ZONE not null,
     unlock_date TIMESTAMP WITH TIME ZONE,
 
-    foreign key (plush_id) references plush (id)
+    foreign key (plush_id) references plush (id) ON DELETE CASCADE
 );

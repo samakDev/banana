@@ -8,7 +8,9 @@ import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
+import org.samak.banana.entity.PlushLockerEntity;
 import org.samak.banana.entity.PlushStateEnumEntity;
+import org.samak.banana.repository.PlushLockerRepository;
 import org.samak.banana.repository.PlushRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +38,12 @@ public class PlushService implements IPlushService {
     private final Subject<PlushState> stateSubject = PublishSubject.create();
     private final IFileStoreService fileStoreService;
     private final PlushRepository plushRepository;
+    private final PlushLockerRepository plushLockerRepository;
 
-    public PlushService(final IPlushConfig plushConfig, final IFileStoreService fileStoreService, final PlushRepository plushRepository) {
+    public PlushService(final IPlushConfig plushConfig, final IFileStoreService fileStoreService, final PlushRepository plushRepository, final PlushLockerRepository plushLockerRepository) {
         this.fileStoreService = fileStoreService;
         this.plushRepository = plushRepository;
+        this.plushLockerRepository = plushLockerRepository;
         LOGGER.info("Plush Service Constructor : {}", plushConfig);
 
         plushConfig.getPlushs()
@@ -89,16 +94,19 @@ public class PlushService implements IPlushService {
     }
 
     @Override
-    public boolean take(final User user, final String plushId) {
-        final PlushState state = plushStates.get(plushId);
+    public boolean take(final UUID plushId, final PlushEntity plushEntity, final String lockerName, @Nullable final OffsetDateTime lockDate) {
+        final PlushLockerEntity entity = new PlushLockerEntity();
+        entity.setName(lockerName);
+        entity.setPlush(plushEntity);
+        entity.setLockDate(Optional.ofNullable(lockDate)
+                .orElseGet(OffsetDateTime::now));
 
-        if (state != null && state.getOwner() == null && user.getId() != null) {
-            state.setOwner(user);
-            stateSubject.onNext(state);
-            return true;
-        }
+        plushLockerRepository.save(entity);
 
-        return false;
+        plushEntity.setState(PlushStateEnumEntity.TAKEN);
+        plushRepository.save(plushEntity);
+
+        return true;
     }
 
     @Override

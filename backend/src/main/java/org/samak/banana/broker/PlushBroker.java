@@ -65,12 +65,6 @@ public class PlushBroker {
         return plushService.getStates();
     }
 
-    @MessageMapping("/plush/take")
-    public void take(final PlushState state) {
-        LOGGER.info("take {}", state);
-        plushService.take(state.getOwner(), state.getPlush().getId());
-    }
-
     @MessageMapping("/plush/release")
     public void release(final PlushState state) {
         LOGGER.info("release {}", state);

@@ -11,13 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface IPlushService {
-
-    boolean take(User user, String plushId);
 
     boolean release(User user, String plushId);
 
@@ -27,7 +26,6 @@ public interface IPlushService {
 
     Optional<PlushState> getState(String id);
 
-
     UUID create(ClawMachineEntity clawMachineEntity, String name, @Nullable Integer order, MultipartFile plushImg);
 
     List<PlushEntity> getAll(ClawMachineEntity clawMachineEntity);
@@ -35,4 +33,6 @@ public interface IPlushService {
     Optional<PlushEntity> getPlushMetadata(UUID plushId);
 
     InputStream getPlushImg(PlushEntity plushEntity) throws FileNotFoundException;
+
+    boolean take(UUID plushId, final PlushEntity plushEntity, String lockerName, final OffsetDateTime lockDate);
 }

@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "plush_locker")
 public class PlushLockerEntity {
 
     @Id

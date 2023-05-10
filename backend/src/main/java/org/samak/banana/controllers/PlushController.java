@@ -7,6 +7,7 @@ import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.domain.plush.User;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
+import org.samak.banana.dto.model.PlushLocker;
 import org.samak.banana.dto.model.Plushes;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
@@ -27,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -175,19 +180,43 @@ public class PlushController {
         return new HttpEntity<>(plush.toByteArray(), metadataHeader);
     }
 
-    @PostMapping(value = "/take/{key}")
-    public ResponseEntity<Boolean> take(@PathVariable("id") final String id, @PathVariable("key") final String key) {
-        final User user = new User();
-        user.setId(key);
-        user.setName(key);
+    @PostMapping(value = "/{id}/lock")
+    public ResponseEntity<Boolean> lock(
+            @PathVariable("claw-machine-id") final UUID clawMachineId,
+            @PathVariable("id") final UUID plushId,
+            @RequestBody() final PlushLocker plushLocker) {
+        LOGGER.info("PlushController.lock. PlushLocker {}, plushId {} for clawMachine {}", plushLocker, plushId, clawMachineId);
 
-        final boolean result = plushService.take(user, id);
-
-        if (result) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (Strings.isBlank(plushLocker.getName())) {
+            throw new IllegalArgumentException("no name found");
         }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        final Optional<ClawMachineEntity> clawMachineOpt = clawMachineService.getClawMachine(clawMachineId);
+
+        if (clawMachineOpt.isEmpty()) {
+            throw new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId);
+        }
+
+        final Optional<PlushEntity> plushOpt = plushService.getPlushMetadata(plushId);
+
+        if (plushOpt.isEmpty()) {
+            throw new IllegalArgumentException("no Plush found for this id " + plushId);
+        }
+
+        final OffsetDateTime lockDate = Optional.of(plushLocker.getSince())
+                .filter(any -> plushLocker.hasSince())
+                .map(timestamp -> Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()))
+                .map(instant -> OffsetDateTime.ofInstant(instant, ZoneId.of("UTC")))
+                .orElse(null);
+
+
+        final boolean result = plushService.take(plushId, plushOpt.get(), plushLocker.getName(), lockDate);
+
+        if (result) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping(value = "/release/{key}")
