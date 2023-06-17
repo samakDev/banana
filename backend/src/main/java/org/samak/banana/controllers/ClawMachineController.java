@@ -95,7 +95,7 @@ public class ClawMachineController {
         LOGGER.info("ClawMachineController.update ClawMachine with id {}, and new value {}", clawMachineId, clawMachineUpdater);
 
         final String name = clawMachineUpdater.hasName() ? clawMachineUpdater.getName() : null;
-        final int order = clawMachineUpdater.hasOrder() ? clawMachineUpdater.getOrder() : null;
+        final Integer order = clawMachineUpdater.hasOrder() ? clawMachineUpdater.getOrder() : null;
 
         final ClawMachine clawMachine = clawMachineService.updateClawMachine(clawMachineId, name, order)
                 .map(CLAW_MACHINE_MAPPER::convertClawMachineEntityToDto)
