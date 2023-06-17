@@ -9,4 +9,6 @@ public interface IFileStoreService {
     String store(String filename, InputStream fileContent) throws IOException;
 
     InputStream fetch(String imageAbsolutePath) throws FileNotFoundException;
+
+    void delete(String imageAbsolutePath) throws IOException;
 }

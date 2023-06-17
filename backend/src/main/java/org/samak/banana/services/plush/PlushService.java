@@ -110,7 +110,12 @@ public class PlushService implements IPlushService {
     }
 
     @Override
-    public void delete(final UUID plushId) {
+    public void delete(final UUID plushId) throws IOException {
+        final Optional<PlushEntity> plush = getPlushMetadata(plushId);
+        if (plush.isPresent()) {
+            fileStoreService.delete(plush.get().getImageAbsolutePath());
+        }
+
         plushRepository.deleteById(plushId);
     }
 

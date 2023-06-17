@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -222,7 +223,7 @@ public class PlushController {
 
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> deletePlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
-                                            @PathVariable("id") final UUID plushId) {
+                                            @PathVariable("id") final UUID plushId) throws IOException {
         LOGGER.info("PlushController.delete {} for clawMachine {}", plushId, clawMachineId);
 
         final Optional<ClawMachineEntity> clawMachineOpt = clawMachineService.getClawMachine(clawMachineId);

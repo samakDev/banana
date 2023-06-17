@@ -42,4 +42,9 @@ public class FileStoreService implements IFileStoreService {
     public InputStream fetch(final String imageAbsolutePath) throws FileNotFoundException {
         return new FileInputStream(imageAbsolutePath);
     }
+
+    @Override
+    public void delete(final String imageAbsolutePath) throws IOException {
+        Files.delete(Paths.get(imageAbsolutePath));
+    }
 }
