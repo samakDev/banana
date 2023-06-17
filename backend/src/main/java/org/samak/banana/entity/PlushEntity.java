@@ -39,15 +39,11 @@ public class PlushEntity {
         return id;
     }
 
-    public void setId(final UUID id) {
-        this.id = id;
-    }
-
     public ClawMachineEntity getClawMachine() {
         return clawMachine;
     }
 
-    public void setClawMachineId(final ClawMachineEntity clawMachine) {
+    public void setClawMachine(final ClawMachineEntity clawMachine) {
         this.clawMachine = clawMachine;
     }
 
