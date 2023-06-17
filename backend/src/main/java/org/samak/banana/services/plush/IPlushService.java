@@ -29,6 +29,8 @@ public interface IPlushService {
 
     UUID create(ClawMachineEntity clawMachineEntity, String name, @Nullable Integer order, MultipartFile plushImg);
 
+    PlushEntity updatePlush(PlushEntity originalPlush, @Nullable String name, @Nullable Integer order, @Nullable MultipartFile plushImg) throws IOException;
+
     List<PlushEntity> getAll(ClawMachineEntity clawMachineEntity);
 
     Optional<PlushEntity> getPlushMetadata(UUID plushId);

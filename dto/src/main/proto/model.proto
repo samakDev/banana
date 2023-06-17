@@ -39,6 +39,11 @@ message Plush {
   optional PlushLocker plushLocker = 6;
 }
 
+message PlushUpdater {
+  optional string name = 1;
+  optional int32 order = 2;
+}
+
 message PlushLocker {
   string name = 1;
   google.protobuf.Timestamp since = 2;

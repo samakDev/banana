@@ -371,16 +371,36 @@
 					"response": []
 				},
 				{
-					"name": "UpdatePlush TOTO",
+					"name": "UpdatePlush",
 					"request": {
 						"method": "PATCH",
 						"header": [
 							{
 								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
 								"value": "application/json",
 								"type": "default"
 							}
 						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metadata",
+									"value": "{ \"name\": \"p2\" , \"order\" : 20 }",
+									"type": "default"
+								},
+								{
+									"key": "plushImg",
+									"type": "file",
+									"src": "/C:/Users/Samak/Documents/dev/repo/banana/backend/src/main/resources/img/snake.jpg"
+								}
+							]
+						},
 						"url": {
 							"raw": "{{base_url}}/api/claw-machine/{{claw_machine_id}}/plushes/{{plush_id}}",
 							"host": [

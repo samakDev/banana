@@ -57,15 +57,10 @@ public class PlushService implements IPlushService {
 
     @Override
     public UUID create(final ClawMachineEntity clawMachineEntity, final String name, @Nullable final Integer order, final MultipartFile plushImg) {
-        final String fileAbsolutePath;
-        try {
-            fileAbsolutePath = fileStoreService.store(plushImg.getOriginalFilename(), plushImg.getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException("impossible to read file", e);
-        }
+        final String fileAbsolutePath = saveImg(plushImg);
 
         final PlushEntity entity = new PlushEntity();
-        entity.setClawMachineId(clawMachineEntity);
+        entity.setClawMachine(clawMachineEntity);
         entity.setName(name);
         entity.setImageAbsolutePath(fileAbsolutePath);
         if (Objects.nonNull(order)) {
@@ -76,6 +71,50 @@ public class PlushService implements IPlushService {
         final PlushEntity saved = plushRepository.save(entity);
 
         return saved.getId();
+    }
+
+    @Override
+    public PlushEntity updatePlush(final PlushEntity originalPlush, @Nullable final String name, @Nullable final Integer order, @Nullable final MultipartFile plushImg) throws IOException {
+        final String newImgPath = Objects.nonNull(plushImg)
+                ? this.saveImg(plushImg)
+                : null;
+
+        final String originalImagePath;
+
+        if (Objects.nonNull(newImgPath)) {
+            originalImagePath = originalPlush.getImageAbsolutePath();
+            originalPlush.setImageAbsolutePath(newImgPath);
+        } else {
+            originalImagePath = null;
+        }
+
+        if (Objects.nonNull(name)) {
+            originalPlush.setName(name);
+        }
+
+        if (Objects.nonNull(order)) {
+            originalPlush.setOrder(order);
+        }
+
+        final PlushEntity updated = plushRepository.save(originalPlush);
+
+        if (Objects.nonNull(originalPlush)) {
+            this.fileStoreService.delete(originalImagePath);
+        }
+
+        return updated;
+    }
+
+    private String saveImg(final MultipartFile plushImg) {
+        try {
+            final String imageStoreAbsolutePath = fileStoreService.store(plushImg.getOriginalFilename(), plushImg.getInputStream());
+
+            LOGGER.info("image saved {}", imageStoreAbsolutePath);
+
+            return imageStoreAbsolutePath;
+        } catch (IOException e) {
+            throw new RuntimeException("impossible to read file", e);
+        }
     }
 
     @Override

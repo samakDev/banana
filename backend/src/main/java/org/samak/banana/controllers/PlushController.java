@@ -8,6 +8,7 @@ import org.samak.banana.domain.plush.User;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
 import org.samak.banana.dto.model.PlushLocker;
+import org.samak.banana.dto.model.PlushUpdater;
 import org.samak.banana.dto.model.Plushes;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
@@ -27,6 +28,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,7 +72,6 @@ public class PlushController {
                                                   @RequestParam("plushImg") final MultipartFile plushImg) {
         LOGGER.info("PlushController.create {} for clawMachine {}", plush, clawMachineId);
 
-
         if (!IMAGE_CONTENT_TYPE_ALLOWED.contains(plushImg.getContentType())) {
             throw new IllegalArgumentException("image format not supported. Expected format : " + IMAGE_CONTENT_TYPE_ALLOWED);
         }
@@ -95,6 +96,33 @@ public class PlushController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(identifier);
+    }
+
+    @PatchMapping(value = "/{plush_id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Plush> updatePlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
+                                             @PathVariable("plush_id") final UUID plushId,
+                                             @RequestParam(value = "metadata", required = false) final PlushUpdater plushUpdater,
+                                             @RequestParam(value = "plushImg", required = false) final MultipartFile plushImg) throws IOException {
+        LOGGER.info("PlushController.updatePlush {} and/or img {} for plush {} in clawMachine {}", plushUpdater, plushImg, plushId, clawMachineId);
+
+        clawMachineService.getClawMachine(clawMachineId)
+                .orElseThrow(() -> new IllegalArgumentException("no ClawMachine for " + clawMachineId));
+
+        final PlushEntity originalPlush = plushService.getPlushMetadata(plushId)
+                .orElseThrow(() -> new IllegalArgumentException("no plush for " + plushId));
+
+        final String name = plushUpdater.hasName() ? plushUpdater.getName() : null;
+        final Integer order = plushUpdater.hasOrder() ? plushUpdater.getOrder() : null;
+
+        if (Objects.isNull(name) && Objects.isNull(order) && Objects.isNull(plushImg)) {
+            throw new IllegalArgumentException("nothing to update");
+        }
+
+        final PlushEntity entity = plushService.updatePlush(originalPlush, name, order, plushImg);
+
+        return ResponseEntity.ok(PLUSH_MAPPER.convertPlushEntityToDto(entity));
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
