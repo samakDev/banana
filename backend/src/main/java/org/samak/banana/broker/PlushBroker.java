@@ -7,7 +7,6 @@ import org.samak.banana.services.plush.IPlushService;
 import org.samak.banana.utils.RxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
@@ -63,11 +62,5 @@ public class PlushBroker {
     public List<PlushState> getStates() {
         LOGGER.info("getStates");
         return plushService.getStates();
-    }
-
-    @MessageMapping("/plush/release")
-    public void release(final PlushState state) {
-        LOGGER.info("release {}", state);
-        plushService.release(state.getOwner(), state.getPlush().getId());
     }
 }

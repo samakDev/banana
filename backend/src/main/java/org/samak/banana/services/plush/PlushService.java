@@ -5,7 +5,6 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import org.samak.banana.domain.plush.IPlushConfig;
 import org.samak.banana.domain.plush.PlushState;
-import org.samak.banana.domain.plush.User;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.samak.banana.entity.PlushLockerEntity;
@@ -149,6 +148,43 @@ public class PlushService implements IPlushService {
     }
 
     @Override
+    public boolean hasRightToUnlock(final PlushEntity plushEntity, final String name) {
+        if (PlushStateEnumEntity.TAKEN != plushEntity.getState()) {
+            LOGGER.error("the plush {} is not taken", plushEntity);
+
+            return false;
+        }
+
+        final Optional<PlushLockerEntity> lockerOpt = plushLockerRepository.findAllByPlushAndUnlockDate(plushEntity, null);
+
+        if (lockerOpt.isEmpty()) {
+            LOGGER.error("State error no locker found for {} but state is TAKEN, should not append", plushEntity);
+            plushEntity.setState(PlushStateEnumEntity.FREE);
+            plushRepository.save(plushEntity);
+            return false;
+        }
+
+        if (name.isEmpty()) {
+            return false;
+        }
+
+        return "admin".equalsIgnoreCase(name) || lockerOpt.get().getName().equalsIgnoreCase(name);
+    }
+
+    @Override
+    public void unlock(final PlushEntity plushEntity) {
+        final PlushLockerEntity locker = plushLockerRepository.findAllByPlushAndUnlockDate(plushEntity, null)
+                .orElseThrow(() -> new RuntimeException("dev should use IPlushService#hasRightToUnlock before calling this"));
+
+        locker.setUnlockDate(OffsetDateTime.now());
+
+        plushLockerRepository.save(locker);
+
+        plushEntity.setState(PlushStateEnumEntity.FREE);
+        plushRepository.save(plushEntity);
+    }
+
+    @Override
     public void delete(final UUID plushId) throws IOException {
         final Optional<PlushEntity> plush = getPlushMetadata(plushId);
         if (plush.isPresent()) {
@@ -156,18 +192,6 @@ public class PlushService implements IPlushService {
         }
 
         plushRepository.deleteById(plushId);
-    }
-
-    @Override
-    public boolean release(final User user, final String plushId) {
-        final PlushState state = plushStates.get(plushId);
-
-        if (state != null && (user.equals(state.getOwner()) || user.getId().equals("admin"))) {
-            state.setOwner(null);
-            stateSubject.onNext(state);
-            return true;
-        }
-        return false;
     }
 
     @Override

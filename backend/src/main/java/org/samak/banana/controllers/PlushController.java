@@ -4,10 +4,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.factory.Mappers;
 import org.samak.banana.domain.plush.PlushState;
-import org.samak.banana.domain.plush.User;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
 import org.samak.banana.dto.model.PlushLocker;
+import org.samak.banana.dto.model.PlushUnLocker;
 import org.samak.banana.dto.model.PlushUpdater;
 import org.samak.banana.dto.model.Plushes;
 import org.samak.banana.entity.ClawMachineEntity;
@@ -249,6 +249,33 @@ public class PlushController {
         }
     }
 
+    @PostMapping(value = "/{id}/unlock")
+    public ResponseEntity<Boolean> unlock(
+            @PathVariable("claw-machine-id") final UUID clawMachineId,
+            @PathVariable("id") final UUID plushId,
+            @RequestBody() final PlushUnLocker plushLocker) {
+        LOGGER.info("PlushController.unlock. plushId {} for clawMachine {}", plushId, clawMachineId);
+
+        clawMachineService.getClawMachine(clawMachineId)
+                .orElseThrow(() -> new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId));
+
+        final Optional<PlushEntity> plushOpt = plushService.getPlushMetadata(plushId);
+
+        if (plushOpt.isEmpty()) {
+            throw new IllegalArgumentException("no Plush found for this id " + plushId);
+        }
+
+        final PlushEntity plushEntity = plushOpt.get();
+
+        if (!plushService.hasRightToUnlock(plushEntity, plushLocker.getName())) {
+            throw new IllegalArgumentException("You are not allowed");
+        }
+
+        plushService.unlock(plushEntity);
+
+        return ResponseEntity.ok(true);
+    }
+
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> deletePlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
                                             @PathVariable("id") final UUID plushId) throws IOException {
@@ -263,21 +290,6 @@ public class PlushController {
         plushService.delete(plushId);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping(value = "/release/{key}")
-    public ResponseEntity<Boolean> release(@PathVariable("id") final String id, @PathVariable("key") final String key) {
-        final User user = new User();
-        user.setId(key);
-        user.setName(key);
-
-        final boolean result = plushService.release(user, id);
-
-        if (result) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(value = "/status")

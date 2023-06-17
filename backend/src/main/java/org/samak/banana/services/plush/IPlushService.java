@@ -3,7 +3,6 @@ package org.samak.banana.services.plush;
 
 import io.reactivex.Observable;
 import org.samak.banana.domain.plush.PlushState;
-import org.samak.banana.domain.plush.User;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IPlushService {
-
-    boolean release(User user, String plushId);
 
     Observable<PlushState> getStream();
 
@@ -39,5 +36,10 @@ public interface IPlushService {
 
     boolean take(UUID plushId, final PlushEntity plushEntity, String lockerName, final OffsetDateTime lockDate);
 
+    boolean hasRightToUnlock(final PlushEntity plushEntity, final String name);
+
+    void unlock(PlushEntity plushEntity);
+
     void delete(UUID plushId) throws IOException;
+
 }

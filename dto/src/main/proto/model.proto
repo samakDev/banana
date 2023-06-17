@@ -49,6 +49,10 @@ message PlushLocker {
   google.protobuf.Timestamp since = 2;
 }
 
+message PlushUnLocker {
+  string name = 1;
+}
+
 message PlushIdentifier {
   string id = 1;
 }
