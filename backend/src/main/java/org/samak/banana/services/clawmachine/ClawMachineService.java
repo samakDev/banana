@@ -111,8 +111,7 @@ public class ClawMachineService implements IClawMachineService {
 
     @Override
     public Observable<ClawMachineEvent> getStream() {
-        return Observable.concat(initState(), clawMachineEventSubject)
-                .observeOn(Schedulers.computation());
+        return Observable.concat(initState(), clawMachineEventSubject);
     }
 
     private Observable<ClawMachineEvent> initState() {
