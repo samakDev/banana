@@ -18,6 +18,7 @@ public interface PlushMapper {
 
         return Plush.newBuilder()
                 .setId(plushEntity.getId().toString())
+                .setClawMachineId(plushEntity.getClawMachine().getId().toString())
                 .setName(plushEntity.getName())
                 .setImageAbsolutePath(plushEntity.getImageAbsolutePath())
                 .setOrder(plushEntity.getOrder())

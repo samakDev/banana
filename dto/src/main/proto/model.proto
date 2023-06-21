@@ -32,11 +32,12 @@ enum PlushState {
 
 message Plush {
   optional string id = 1;
-  string name = 2;
-  optional string imageAbsolutePath = 3;
-  optional int32 order = 4;
-  PlushState state = 5;
-  optional PlushLocker plushLocker = 6;
+  string claw_machine_id = 2;
+  string name = 3;
+  optional string image_absolute_path = 4;
+  optional int32 order = 5;
+  PlushState state = 6;
+  optional PlushLocker plush_locker = 7;
 }
 
 message PlushUpdater {
