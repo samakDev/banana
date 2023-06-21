@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 public class FileStoreService implements IFileStoreService {
@@ -31,7 +32,7 @@ public class FileStoreService implements IFileStoreService {
 
     @Override
     public String store(final String filename, final InputStream fileContent) throws IOException {
-        final Path fileAbsolutePath = imageFolderPath.resolve(filename);
+        final Path fileAbsolutePath = imageFolderPath.resolve(UUID.randomUUID() + "_" + filename);
 
         Files.write(fileAbsolutePath, fileContent.readAllBytes());
 
