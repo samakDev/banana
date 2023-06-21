@@ -30,3 +30,28 @@ message UpdatedClawMachineEvent {
 message DeletedClawMachineEvent {
   string clawMachineId = 1;
 }
+
+message PlushEvent {
+  oneof event {
+    CurrentStatePlushEvent currentStatePlushEvent = 1;
+    CreatedPlushEvent createPlushEvent = 2;
+    UpdatedPlushEvent updatedPlushEvent = 3;
+    DeletedPlushEvent deletedPlushEvent = 4;
+  }
+}
+
+message CurrentStatePlushEvent {
+  repeated org.samak.banana.dto.model.Plush plushes = 1;
+}
+
+message CreatedPlushEvent {
+  org.samak.banana.dto.model.Plush plush = 1;
+}
+
+message UpdatedPlushEvent {
+  org.samak.banana.dto.model.Plush plush = 1;
+}
+
+message DeletedPlushEvent {
+  string plushId = 1;
+}
