@@ -1,14 +1,20 @@
 package org.samak.banana.services.plush;
 
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-import org.samak.banana.domain.plush.IPlushConfig;
-import org.samak.banana.domain.plush.PlushState;
+import org.mapstruct.factory.Mappers;
+import org.samak.banana.dto.message.CreatedPlushEvent;
+import org.samak.banana.dto.message.CurrentStatePlushEvent;
+import org.samak.banana.dto.message.DeletedPlushEvent;
+import org.samak.banana.dto.message.PlushEvent;
+import org.samak.banana.dto.message.UpdatedPlushEvent;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.samak.banana.entity.PlushLockerEntity;
 import org.samak.banana.entity.PlushStateEnumEntity;
+import org.samak.banana.mapper.PlushMapper;
 import org.samak.banana.repository.PlushLockerRepository;
 import org.samak.banana.repository.PlushRepository;
 import org.slf4j.Logger;
@@ -21,37 +27,26 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @Service
 public class PlushService implements IPlushService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushService.class);
+    private static final PlushMapper PLUSH_MAPPER = Mappers.getMapper(PlushMapper.class);
 
-    private final Map<String, PlushState> plushStates = new HashMap<>();
-    private final Subject<PlushState> stateSubject = PublishSubject.create();
     private final IFileStoreService fileStoreService;
     private final PlushRepository plushRepository;
     private final PlushLockerRepository plushLockerRepository;
+    private final Subject<PlushEvent> plushEventSubject = PublishSubject.create();
 
-    public PlushService(final IPlushConfig plushConfig, final IFileStoreService fileStoreService, final PlushRepository plushRepository, final PlushLockerRepository plushLockerRepository) {
+    public PlushService(final IFileStoreService fileStoreService, final PlushRepository plushRepository, final PlushLockerRepository plushLockerRepository) {
         this.fileStoreService = fileStoreService;
         this.plushRepository = plushRepository;
         this.plushLockerRepository = plushLockerRepository;
-        LOGGER.info("Plush Service Constructor : {}", plushConfig);
-
-        plushConfig.getPlushs()
-                .forEach(p -> {
-                    final PlushState state = new PlushState();
-                    state.setPlush(p);
-
-                    plushStates.put(p.getId(), state);
-                });
     }
 
     @Override
@@ -68,6 +63,13 @@ public class PlushService implements IPlushService {
         entity.setState(PlushStateEnumEntity.FREE);
 
         final PlushEntity saved = plushRepository.save(entity);
+
+        final PlushEvent createdEvent = PlushEvent.newBuilder()
+                .setCreatePlushEvent(CreatedPlushEvent.newBuilder()
+                        .setPlush(PLUSH_MAPPER.convertPlushEntityToDto(entity)))
+                .build();
+
+        plushEventSubject.onNext(createdEvent);
 
         return saved.getId();
     }
@@ -97,9 +99,16 @@ public class PlushService implements IPlushService {
 
         final PlushEntity updated = plushRepository.save(originalPlush);
 
-        if (Objects.nonNull(originalPlush)) {
+        if (Objects.nonNull(originalImagePath)) {
             this.fileStoreService.delete(originalImagePath);
         }
+
+        final PlushEvent updatedEvent = PlushEvent.newBuilder()
+                .setUpdatedPlushEvent(UpdatedPlushEvent.newBuilder()
+                        .setPlush(PLUSH_MAPPER.convertPlushEntityToDto(updated)))
+                .build();
+
+        plushEventSubject.onNext(updatedEvent);
 
         return updated;
     }
@@ -192,22 +201,30 @@ public class PlushService implements IPlushService {
         }
 
         plushRepository.deleteById(plushId);
+
+        final PlushEvent deletedEvent = PlushEvent.newBuilder()
+                .setDeletedPlushEvent(DeletedPlushEvent.newBuilder()
+                        .setPlushId(plushId.toString()))
+                .build();
+
+        plushEventSubject.onNext(deletedEvent);
     }
 
     @Override
-    public Observable<PlushState> getStream() {
-        return stateSubject.startWith(plushStates.values());
+    public Observable<PlushEvent> getStream() {
+        return Observable.concat(initState(), plushEventSubject);
     }
 
-    @Override
-    public List<PlushState> getStates() {
-        return new ArrayList<>(plushStates.values());
-
-    }
-
-    @Override
-    public Optional<PlushState> getState(String id) {
-        return Optional.ofNullable(plushStates.get(id));
+    private Observable<PlushEvent> initState() {
+        return Observable.fromCallable(plushRepository::findAll)
+                .map(clawMachineEntities -> StreamSupport.stream(clawMachineEntities.spliterator(), false)
+                        .map(PLUSH_MAPPER::convertPlushEntityToDto)
+                        .toList())
+                .map(plushes -> PlushEvent.newBuilder()
+                        .setCurrentStatePlushEvent(CurrentStatePlushEvent.newBuilder()
+                                .addAllPlushes(plushes))
+                        .build())
+                .subscribeOn(Schedulers.io());
     }
 
 }

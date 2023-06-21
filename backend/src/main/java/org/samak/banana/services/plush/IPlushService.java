@@ -2,7 +2,7 @@ package org.samak.banana.services.plush;
 
 
 import io.reactivex.Observable;
-import org.samak.banana.domain.plush.PlushState;
+import org.samak.banana.dto.message.PlushEvent;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,11 +18,7 @@ import java.util.UUID;
 
 public interface IPlushService {
 
-    Observable<PlushState> getStream();
-
-    List<PlushState> getStates();
-
-    Optional<PlushState> getState(String id);
+    Observable<PlushEvent> getStream();
 
     UUID create(ClawMachineEntity clawMachineEntity, String name, @Nullable Integer order, MultipartFile plushImg);
 

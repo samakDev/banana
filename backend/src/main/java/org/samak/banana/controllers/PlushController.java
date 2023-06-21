@@ -3,7 +3,6 @@ package org.samak.banana.controllers;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.factory.Mappers;
-import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
 import org.samak.banana.dto.model.PlushLocker;
@@ -290,14 +289,6 @@ public class PlushController {
         plushService.delete(plushId);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping(value = "/status")
-    public ResponseEntity<PlushState> status(@PathVariable("id") final String id) {
-        return plushService.getState(id)
-                .map(plush -> new ResponseEntity<>(plush, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-
     }
 
 }

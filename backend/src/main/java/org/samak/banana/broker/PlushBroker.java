@@ -2,16 +2,13 @@ package org.samak.banana.broker;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import org.samak.banana.domain.plush.PlushState;
 import org.samak.banana.services.plush.IPlushService;
 import org.samak.banana.utils.RxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,11 +31,10 @@ public class PlushBroker {
 
     public void listenPlushService(final UUID sessionId) {
         final Disposable disposable = this.plushService.getStream()
-                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
-                .subscribe(state -> {
-                    LOGGER.info("Send state : {}", state);
-                    this.messagingTemplate.convertAndSend("/banana/plush/states", state);
+                .subscribe(plushEvent -> {
+                    LOGGER.info("Send plushEvent : {}", plushEvent);
+                    this.messagingTemplate.convertAndSend("/banana/plush", plushEvent.toByteArray());
                 }, RxUtils.logError(LOGGER));
 
         listeningMap.compute(sessionId, (k, v) -> {
@@ -56,11 +52,5 @@ public class PlushBroker {
         if (Objects.nonNull(disposable)) {
             disposable.dispose();
         }
-    }
-
-    @SubscribeMapping("/plush/states")
-    public List<PlushState> getStates() {
-        LOGGER.info("getStates");
-        return plushService.getStates();
     }
 }
