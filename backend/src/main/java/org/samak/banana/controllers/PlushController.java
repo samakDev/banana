@@ -5,6 +5,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
+import org.samak.banana.dto.model.PlushImport;
 import org.samak.banana.dto.model.PlushLocker;
 import org.samak.banana.dto.model.PlushUnLocker;
 import org.samak.banana.dto.model.PlushUpdater;
@@ -289,6 +290,33 @@ public class PlushController {
         plushService.delete(plushId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/import",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> importPlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
+                                               @RequestParam(value = "metadata", required = false) final PlushImport plushImport,
+                                               @RequestParam("bananaConfigFile") final MultipartFile bananaConfigFile) throws IOException {
+        LOGGER.info("PlushController.importPlush for clawMachine {} with plushImport {}", clawMachineId, plushImport);
+
+        if (!"application/json".equals(bananaConfigFile.getContentType())) {
+            throw new IllegalArgumentException("Only BananaConfig.json are allowed");
+        }
+
+        final Optional<ClawMachineEntity> clawMachineOpt = clawMachineService.getClawMachine(clawMachineId);
+
+        if (clawMachineOpt.isEmpty()) {
+            throw new IllegalArgumentException("no ClawMachine found for this id " + clawMachineId);
+        }
+
+        final String homeDirectory = Objects.nonNull(plushImport) && plushImport.hasHomeDirectory()
+                ? plushImport.getHomeDirectory()
+                : null;
+
+        final boolean allSucceed = plushService.importBananaConfig(clawMachineOpt.get(), bananaConfigFile, homeDirectory);
+
+        return ResponseEntity.ok(allSucceed);
     }
 
 }

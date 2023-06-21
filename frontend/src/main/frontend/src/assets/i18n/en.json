@@ -48,5 +48,11 @@
   "settings-plush-form_plush-img-label": "Select an image",
   "settings-plush-form_create-plush-button-label": "Create",
   "settings-plush-form_update-plush-button-label": "Update",
-  "settings-plush-form_delete-plush-button-label": "Delete"
+  "settings-plush-form_delete-plush-button-label": "Delete",
+  "settings-plush-import_title": "Import old plush",
+  "settings-plush-import_home-directory-label": "Working directory",
+  "settings-plush-import_home-directory-tooltip": "If file contains relative path, set working directory (must be from server)",
+  "settings-plush-import_button-label": "Import",
+  "settings-plush-import_import-success": "Import successfuly",
+  "settings-plush-import_import-error": "Error while importing"
 }

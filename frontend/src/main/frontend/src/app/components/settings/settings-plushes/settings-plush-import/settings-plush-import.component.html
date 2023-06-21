@@ -1,0 +1,50 @@
+<div class="container">
+  <h2 translate="settings-plush-import_title"></h2>
+</div>
+
+<form (ngSubmit)="onSubmit()" #form="ngForm">
+  <div *ngIf="responseSuccess !== undefined"
+       class="mb-3 alert"
+       [ngClass]="{'alert-primary': responseSuccess, 'alert-danger': !responseSuccess}"
+       role="alert">
+    {{ responseText | translate }}
+  </div>
+
+  <div class="mb-3">
+    <label for="importImg"
+           class="form-label"
+           translate="settings-plush-import_title"></label>
+
+    <input type="file"
+           id="importImg"
+           class="form-control"
+           name="importImg"
+           (change)="selectedFile($event)"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="description"
+           class="form-label"
+           translate="settings-plush-import_home-directory-label"></label>
+
+    <i class="fa fa-info-circle p-lg-2"
+       ngbTooltip="{{'settings-plush-import_home-directory-tooltip' | translate}}"
+       placement="bottom"></i>
+
+    <input type="text"
+           id="description"
+           class="form-control"
+           name="homeDirectory"
+           [(ngModel)]="homeDirectory"/>
+  </div>
+
+  <div style="height: 1.5em" class="mb-3">
+    <div class="float-end">
+
+      <button type="submit"
+              class="btn btn-primary"
+              translate="settings-plush-import_button-label">
+      </button>
+    </div>
+  </div>
+</form>

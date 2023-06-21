@@ -32,6 +32,7 @@
   "settings-plushes_claw-machine-title": "Machine à pince en cours d'edition : ",
   "settings-plush_create_link": "Créer",
   "settings-plush_update_link": "Mettre à jour",
+  "settings-plush_import_link": "Import",
   "settings-plush-create_title": "Création d'une plush",
   "settings-plush-create_created-success": "La création a été réussie",
   "settings-plush-create_created-error": "Une erreur est survenue lors de la création",
@@ -48,5 +49,11 @@
   "settings-plush-form_plush-img-label": "Sélectionner l'image",
   "settings-plush-form_create-plush-button-label": "Créer",
   "settings-plush-form_update-plush-button-label": "Mettre à jour",
-  "settings-plush-form_delete-plush-button-label": "Supprimer"
+  "settings-plush-form_delete-plush-button-label": "Supprimer",
+  "settings-plush-import_title": "Import vieille plush",
+  "settings-plush-import_home-directory-label": "Dossier de travail",
+  "settings-plush-import_home-directory-tooltip": "Si le fichier contient des images avec un chemin relatif, merci de renseigner le chemin de base (ps: le chemin doit être accessible depuis le serveur",
+  "settings-plush-import_button-label": "Importer",
+  "settings-plush-import_import-success": "L'import a été réussie",
+  "settings-plush-import_import-error": "Une erreur est survenue lors de l'import"
 }

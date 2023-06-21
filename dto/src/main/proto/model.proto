@@ -61,3 +61,7 @@ message PlushIdentifier {
 message Plushes {
   repeated Plush plush = 1;
 }
+
+message PlushImport {
+  optional string home_directory = 1;
+}

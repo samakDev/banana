@@ -1,9 +1,11 @@
 package org.samak.banana.services.plush;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import org.apache.commons.io.FilenameUtils;
 import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.message.CreatedPlushEvent;
 import org.samak.banana.dto.message.CurrentStatePlushEvent;
@@ -14,6 +16,7 @@ import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.samak.banana.entity.PlushLockerEntity;
 import org.samak.banana.entity.PlushStateEnumEntity;
+import org.samak.banana.importplush.Plushes;
 import org.samak.banana.mapper.PlushMapper;
 import org.samak.banana.repository.PlushLockerRepository;
 import org.samak.banana.repository.PlushRepository;
@@ -23,14 +26,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -53,6 +60,10 @@ public class PlushService implements IPlushService {
     public UUID create(final ClawMachineEntity clawMachineEntity, final String name, @Nullable final Integer order, final MultipartFile plushImg) {
         final String fileAbsolutePath = saveImg(plushImg);
 
+        return create(clawMachineEntity, name, order, fileAbsolutePath);
+    }
+
+    private UUID create(final ClawMachineEntity clawMachineEntity, final String name, @Nullable final Integer order, final String fileAbsolutePath) {
         final PlushEntity entity = new PlushEntity();
         entity.setClawMachine(clawMachineEntity);
         entity.setName(name);
@@ -197,7 +208,12 @@ public class PlushService implements IPlushService {
     public void delete(final UUID plushId) throws IOException {
         final Optional<PlushEntity> plush = getPlushMetadata(plushId);
         if (plush.isPresent()) {
-            fileStoreService.delete(plush.get().getImageAbsolutePath());
+            final PlushEntity plushEntity = plush.get();
+
+            final File file = new File(plushEntity.getImageAbsolutePath());
+            if (file.exists()) {
+                fileStoreService.delete(plushEntity.getImageAbsolutePath());
+            }
         }
 
         plushRepository.deleteById(plushId);
@@ -208,6 +224,48 @@ public class PlushService implements IPlushService {
                 .build();
 
         plushEventSubject.onNext(deletedEvent);
+    }
+
+    @Override
+    public boolean importBananaConfig(final ClawMachineEntity clawMachineEntity, final MultipartFile jsonFile, @Nullable final String homeDirectory) throws IOException {
+        final Plushes plushes = getIPlushConfig(jsonFile);
+
+        final AtomicBoolean allSucceed = new AtomicBoolean(true);
+
+        plushes.getPlushs()
+                .stream()
+                .map(plush -> {
+                    final String original = plush.getImg();
+
+                    final File imgFile = new File(homeDirectory, original);
+
+                    if (imgFile.exists() && imgFile.isFile()) {
+                        try {
+                            final String filePath = fileStoreService.store(FilenameUtils.getName(original), new FileInputStream(imgFile));
+
+                            return Optional.of(Map.entry(plush.getName(), filePath));
+                        } catch (IOException e) {
+                            LOGGER.error("Une erreur est surevenue lors de l'import de filePath ", e);
+                            allSucceed.set(false);
+                            return Optional.<Map.Entry<String, String>>empty();
+                        }
+                    } else {
+                        allSucceed.set(false);
+                        return Optional.of(Map.entry(plush.getName(), ""));
+                    }
+
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(plush -> create(clawMachineEntity, plush.getKey(), 0, plush.getValue()));
+
+        return allSucceed.get();
+    }
+
+    private Plushes getIPlushConfig(final MultipartFile jsonFile) throws IOException {
+        try (InputStream fileContentStream = jsonFile.getInputStream()) {
+            return new ObjectMapper().readValue(fileContentStream, Plushes.class);
+        }
     }
 
     @Override

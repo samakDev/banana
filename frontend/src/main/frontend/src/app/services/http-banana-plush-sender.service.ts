@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Plush, PlushUpdater} from 'dto/target/ts/model_pb';
+import {Plush, PlushImport, PlushUpdater} from 'dto/target/ts/model_pb';
 import {PlushModel} from "../models/plush.model";
 
 @Injectable()
@@ -15,6 +15,7 @@ export class HttpBananaPlushSenderService {
   private readonly CREATE_PLUSH_ENDPOINT_FN = (clawMachineId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + "/create";
   private readonly UPDATE_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}`;
   private readonly DELETE_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}`
+  private readonly IMPORT_PLUSH_ENDPOINT_FN = (clawMachineId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/import`
 
   constructor(private httpClient: HttpClient) {
   }
@@ -69,6 +70,24 @@ export class HttpBananaPlushSenderService {
     const url = this.DELETE_PLUSH_ENDPOINT_FN(clawMachineId, plushId);
 
     return this.httpClient.delete(url, {headers: headers})
+  }
+
+  public importPlushCmd(clawMachineId: string, importFile: File, homeDirectory: string): Observable<Object> {
+    const url = this.IMPORT_PLUSH_ENDPOINT_FN(clawMachineId);
+
+    const metadata: PlushImport.AsObject = {
+      homeDirectory: homeDirectory
+    };
+
+    const formData: any = new FormData();
+    formData.append("metadata", this.jsonifyMessage(metadata))
+    formData.append("bananaConfigFile", importFile);
+
+    const headers = new HttpHeaders({
+      "Accept": "application/json"
+    });
+
+    return this.httpClient.post(url, formData, {headers: headers})
   }
 
   private jsonifyMessage(protoMessage: any): string {

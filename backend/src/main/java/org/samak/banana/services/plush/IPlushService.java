@@ -38,4 +38,5 @@ public interface IPlushService {
 
     void delete(UUID plushId) throws IOException;
 
+    boolean importBananaConfig(final ClawMachineEntity clawMachineEntity, MultipartFile jsonFile, @Nullable final String homeDirectory) throws IOException;
 }

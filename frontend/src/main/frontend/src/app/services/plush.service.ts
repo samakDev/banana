@@ -116,4 +116,9 @@ export class PlushService {
   public deletePlush(clawMachineId: string, plushId: string): Observable<Object> {
     return this.senderService.sendDeletePlushCmd(clawMachineId, plushId);
   }
+
+  public importPlush(clawMachineId: string, importFile: File, homeDirectory: string): Observable<Boolean> {
+    return this.senderService.importPlushCmd(clawMachineId, importFile, homeDirectory)
+      .pipe(map(response => <Boolean>response));
+  }
 }

@@ -48,6 +48,9 @@ import {
 import {
   SettingsPlushUpdateComponent
 } from './components/settings/settings-plushes/settings-plush-update/settings-plush-update.component';
+import {
+  SettingsPlushImportComponent
+} from './components/settings/settings-plushes/settings-plush-import/settings-plush-import.component';
 
 declare var require: any;
 
@@ -63,7 +66,8 @@ const appRoutes: Routes = [
         children: [
           {path: "", pathMatch: "full", redirectTo: "create"},
           {path: "create", component: SettingsPlushCreateComponent},
-          {path: "update", component: SettingsPlushUpdateComponent}
+          {path: "update", component: SettingsPlushUpdateComponent},
+          {path: "import", component: SettingsPlushImportComponent}
         ]
       }
     ]
@@ -100,7 +104,8 @@ export function highchartsFactory() {
     SettingsPlushesComponent,
     SettingsPlushCreateComponent,
     SettingsPlushFormComponent,
-    SettingsPlushUpdateComponent
+    SettingsPlushUpdateComponent,
+    SettingsPlushImportComponent
   ],
   imports: [
     BrowserModule,
