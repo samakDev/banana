@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {ClawMachineModel} from "../models/claw.machine.model";
 import {ClawMachine, ClawMachineUpdater} from 'dto/target/ts/model_pb';
 
@@ -13,8 +13,9 @@ export class HttpBananaClawMachineSenderService {
   // ClawMachine endpoints
   private readonly CLAW_MACHINE_BASE_ENDPOINT = this.BASE_API_URL + this.BASE_API_ENDPOINT + "claw-machine/";
   private readonly CREATE_CLAW_MACHINE_ENDPOINT = this.CLAW_MACHINE_BASE_ENDPOINT + "create";
-  private readonly UPDATE_CLAW_MACHINE_ENDPOINT = this.CLAW_MACHINE_BASE_ENDPOINT;
-  private readonly DELETE_CLAW_MACHINE_ENDPOINT = this.CLAW_MACHINE_BASE_ENDPOINT;
+  private readonly UPDATE_CLAW_MACHINE_FN = (clawMachineId) => this.CLAW_MACHINE_BASE_ENDPOINT + `${clawMachineId}`;
+  private readonly DELETE_CLAW_MACHINE_FN = (clawMachineId) => this.CLAW_MACHINE_BASE_ENDPOINT + `${clawMachineId}`;
+  private readonly GET_CLAW_MACHINE_FN = (clawMachineId) => this.CLAW_MACHINE_BASE_ENDPOINT + `${clawMachineId}`;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -49,7 +50,9 @@ export class HttpBananaClawMachineSenderService {
       "Content-Type": "application/json"
     });
 
-    return this.httpClient.patch(this.UPDATE_CLAW_MACHINE_ENDPOINT + clawMachineId, updateJson, {headers: headers})
+    const url = this.UPDATE_CLAW_MACHINE_FN(clawMachineId);
+
+    return this.httpClient.patch(url, updateJson, {headers: headers})
   }
 
   public sendDeleteCmd(clawMachineId: string): Observable<Object> {
@@ -57,7 +60,20 @@ export class HttpBananaClawMachineSenderService {
       "Content-Type": "application/json"
     });
 
-    return this.httpClient.delete(this.DELETE_CLAW_MACHINE_ENDPOINT + clawMachineId, {headers: headers})
+    const url = this.DELETE_CLAW_MACHINE_FN(clawMachineId);
+
+    return this.httpClient.delete(url, {headers: headers})
+  }
+
+  public getClawMachine(clawMachineId: string): Observable<ClawMachine.AsObject> {
+    const url = this.GET_CLAW_MACHINE_FN(clawMachineId);
+
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json"
+    });
+
+    return this.httpClient.get(url, {headers: headers})
+      .pipe(map(response => <ClawMachine.AsObject>response));
   }
 
   private jsonifyMessage(protoMessage: any): string {

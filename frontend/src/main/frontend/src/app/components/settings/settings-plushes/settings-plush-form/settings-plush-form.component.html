@@ -1,0 +1,61 @@
+<form (ngSubmit)="onSubmit()" #form="ngForm">
+  <div class="mb-3">
+    <label for="plushName"
+           class="form-label"
+           translate="settings-plush-form_plush-name-label"></label>
+
+    <input type="text"
+           id="plushName"
+           class="form-control"
+           name="plushName"
+           [(ngModel)]="plushUpdated.name"
+           required
+           placeholder="{{ 'settings-plush-form_plush-name-placeholder' | translate }}"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="plushOrder"
+           class="form-label"
+           translate="settings-plush-form_plush-order-label"></label>
+
+    <input type="number"
+           id="plushOrder"
+           class="form-control"
+           name="plushOrder"
+           [(ngModel)]="plushUpdated.order"
+           placeholder="{{ 'settings-plush-form_plush-order-placeholder' | translate }}"/>
+  </div>
+
+  <div *ngIf="plushUpdated.imagePath !== undefined"
+       class="mb-3">
+    <label class="form-label"
+           translate="settings-plush-form_plush-current-img-label"></label>
+    <label class="form-control">{{plushUpdated.imagePath}}</label>
+  </div>
+
+  <div class="mb-3">
+    <label for="plushImg"
+           class="form-label"
+           translate="settings-plush-form_plush-img-label"></label>
+
+    <input type="file"
+           id="plushImg"
+           class="form-control"
+           name="plushImg"
+           (change)="selectFile($event)"/>
+  </div>
+
+  <div style="height: 1.5em" class="mb-3">
+    <div class="float-end">
+      <button type="button"
+              *ngIf="isEditing"
+              (click)="sendDeleteAction()"
+              class="btn btn-danger me-3"
+              translate="settings-plush-form_delete-plush-button-label"></button>
+
+      <button type="submit" class="btn btn-primary">
+        {{ buttonLabel | translate }}
+      </button>
+    </div>
+  </div>
+</form>

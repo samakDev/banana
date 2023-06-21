@@ -1,0 +1,35 @@
+<a routerLink="/settings">
+  <i class="fa fa-arrow-left"></i>
+
+  {{ "settings-plushes_back-button-label" | translate}}
+</a>
+
+<div>
+  <h2 translate="settings-plushes_claw-machine-title"></h2>
+  <h4>{{ clawMachineName }}</h4>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <button
+      class="nav-link"
+      routerLink="/settings/{{clawMachineId}}/create"
+      routerLinkActive="active"
+      type="button"
+      translate="settings-plush_create_link">
+    </button>
+  </li>
+  <li class="nav-item">
+    <button
+      class="nav-link"
+      routerLink="/settings/{{clawMachineId}}/update"
+      routerLinkActive="active"
+      type="button"
+      translate="settings-plush_update_link">
+    </button>
+  </li>
+</ul>
+
+<div class="container pt-3">
+  <router-outlet></router-outlet>
+</div>

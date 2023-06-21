@@ -1,0 +1,14 @@
+<div class="container">
+  <h2 translate="settings-plush-create_title"></h2>
+
+  <div *ngIf="responseSuccess !== undefined"
+       class="mb-3 alert"
+       [ngClass]="{'alert-primary': responseSuccess, 'alert-danger': !responseSuccess}"
+       role="alert">
+    {{ responseText | translate }}
+  </div>
+
+  <app-settings-plush-form
+    [clawMachineId]="clawMachineId"
+    (formSubmited)="sendCreatePlush($event)"></app-settings-plush-form>
+</div>

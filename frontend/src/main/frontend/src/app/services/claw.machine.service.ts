@@ -42,6 +42,11 @@ export class ClawMachineService {
     this.clawMachinesEvents.push(clawMachineEvent);
   }
 
+  public getClawMachineName(clawMachineId: string): Observable<string> {
+    return this.httpBananaSenderService.getClawMachine(clawMachineId)
+      .pipe(map(clawMachine => clawMachine.name))
+  }
+
   public static convertClawMachineDtoToClawMachineModel(clawMachine: ClawMachine): ClawMachineModel {
     if (!clawMachine.hasId()) {
       return undefined;

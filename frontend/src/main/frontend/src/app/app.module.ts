@@ -17,6 +17,7 @@ import {RxStompServiceFactory} from "./services/stomp/rx-stomp-service-factory";
 import {RxStompConfigProvider} from "./services/stomp/rx.stomp.config";
 import {NgOptimizedImage} from "@angular/common";
 import {HttpBananaClawMachineSenderService} from "./services/http-banana-claw-machine-sender.service";
+import {HttpBananaPlushSenderService} from "./services/http-banana-plush-sender.service";
 import {ClawMachineService} from "./services/claw.machine.service";
 import {AppComponent} from './app.component';
 import {MenuComponent} from './components/menu/menu.component';
@@ -37,11 +38,36 @@ import {
 } from './components/settings/settings-claw-machine/settings-claw-machine-form/settings-claw-machine-form.component';
 import {NameService} from "./services/name.service";
 import {ClawMachineComponent} from './components/claw-machine/claw-machine.component';
+import {SettingsPlushesComponent} from './components/settings/settings-plushes/settings-plushes.component';
+import {
+  SettingsPlushCreateComponent
+} from './components/settings/settings-plushes/settings-plush-create/settings-plush-create.component';
+import {
+  SettingsPlushFormComponent
+} from './components/settings/settings-plushes/settings-plush-form/settings-plush-form.component';
+import {
+  SettingsPlushUpdateComponent
+} from './components/settings/settings-plushes/settings-plush-update/settings-plush-update.component';
 
 declare var require: any;
 
 const appRoutes: Routes = [
-  {path: 'settings', component: SettingsComponent},
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    children: [
+      {path: "", component: SettingsClawMachineComponent},
+      {
+        path: ":id",
+        component: SettingsPlushesComponent,
+        children: [
+          {path: "", pathMatch: "full", redirectTo: "create"},
+          {path: "create", component: SettingsPlushCreateComponent},
+          {path: "update", component: SettingsPlushUpdateComponent}
+        ]
+      }
+    ]
+  },
   {path: 'claw-machine/:id', component: ClawMachineComponent},
   {path: '**', redirectTo: 'settings', pathMatch: 'full'},
 ];
@@ -70,7 +96,11 @@ export function highchartsFactory() {
     SettingsClawMachineCreateComponent,
     SettingsClawMachineUpdateComponent,
     SettingsClawMachineFormComponent,
-    ClawMachineComponent
+    ClawMachineComponent,
+    SettingsPlushesComponent,
+    SettingsPlushCreateComponent,
+    SettingsPlushFormComponent,
+    SettingsPlushUpdateComponent
   ],
   imports: [
     BrowserModule,
@@ -96,6 +126,7 @@ export function highchartsFactory() {
   ],
   providers: [
     HttpBananaClawMachineSenderService,
+    HttpBananaPlushSenderService,
     ContextService,
     ClawMachineService,
     PlushService,
