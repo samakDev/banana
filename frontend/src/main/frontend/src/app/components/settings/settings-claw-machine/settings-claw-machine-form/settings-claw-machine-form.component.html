@@ -29,7 +29,13 @@
   <div style="height: 1.5em" class="mb-3">
     <div class="float-end">
       <button type="button"
-              *ngIf="isDeletable"
+              *ngIf="isEditing"
+              (click)="editPlushes(clawMachineInput.id)"
+              class="btn btn-secondary me-3"
+              translate="settings-claw-machine-form_edit-plushed-button-label"></button>
+
+      <button type="button"
+              *ngIf="isEditing"
               (click)="sendDeleteAction(clawMachineInput.id)"
               class="btn btn-danger me-3"
               translate="settings-claw-machine-form_delete-claw-machine-button-label"></button>

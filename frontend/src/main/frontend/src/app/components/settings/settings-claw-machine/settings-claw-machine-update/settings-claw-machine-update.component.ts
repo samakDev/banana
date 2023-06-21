@@ -16,8 +16,6 @@ export class SettingsClawMachineUpdateComponent {
   responseText: String;
 
   constructor(private clawMachineService: ClawMachineService, private senderService: HttpBananaClawMachineSenderService) {
-    console.log('SettingsClawMachineUpdateComponent : ');
-
     this.listenClawMachineService();
   }
 
@@ -64,7 +62,7 @@ export class SettingsClawMachineUpdateComponent {
     };
   }
 
-  private addOrUpdate(clawMachineModel: ClawMachineModel) {
+  private addOrUpdate(clawMachineModel: ClawMachineModel): void {
     const index = this.clawMachines.findIndex(model => model.id === clawMachineModel.id);
 
     if (index !== -1) {

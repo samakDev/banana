@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {ClawMachineModel} from "../../../../models/claw.machine.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-settings-claw-machine-form',
@@ -9,7 +10,7 @@ import {ClawMachineModel} from "../../../../models/claw.machine.model";
 })
 export class SettingsClawMachineFormComponent implements OnInit {
   @Input("clawMachine") clawMachineInput: ClawMachineModel;
-  @Input("deletable") isDeletable: boolean;
+  @Input("isEditing") isEditing: boolean;
   @Output('formSubmited') formEvent = new EventEmitter<ClawMachineModel>();
   @Output('deleteSubmited') deleteEvent = new EventEmitter<string>();
 
@@ -23,13 +24,16 @@ export class SettingsClawMachineFormComponent implements OnInit {
 
   @ViewChild("form") form: NgForm;
 
+  constructor(private router: Router) {
+  }
+
   ngOnInit() {
     if (this.clawMachineInput !== undefined) {
       this.clawMachineUpdated.name = this.clawMachineInput.name;
       this.clawMachineUpdated.order = this.clawMachineInput.order;
     }
 
-    this.buttonLabel = this.isDeletable
+    this.buttonLabel = this.isEditing
       ? 'settings-claw-machine-form_update-claw-machine-button-label'
       : 'settings-claw-machine-form_create-claw-machine-button-label'
   }
@@ -44,7 +48,12 @@ export class SettingsClawMachineFormComponent implements OnInit {
     this.formEvent.emit(clawMachineEdited);
   }
 
+  editPlushes(id: string) {
+    this.router.navigate(['/settings/' + id + "/create"]);
+  }
+
   sendDeleteAction(id: string) {
     this.deleteEvent.emit(id);
   }
+
 }
