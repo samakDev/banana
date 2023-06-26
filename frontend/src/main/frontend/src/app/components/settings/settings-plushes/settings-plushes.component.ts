@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {map, mergeMap} from "rxjs";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {map, mergeMap, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {ClawMachineService} from "../../../services/claw.machine.service";
 
@@ -8,15 +8,17 @@ import {ClawMachineService} from "../../../services/claw.machine.service";
   templateUrl: './settings-plushes.component.html',
   styleUrls: ['./settings-plushes.component.css']
 })
-export class SettingsPlushesComponent implements OnInit {
+export class SettingsPlushesComponent implements OnInit, OnDestroy {
   clawMachineId: string;
   clawMachineName: string;
 
   constructor(private route: ActivatedRoute, private clawMachineService: ClawMachineService) {
   }
 
+  private routeSubscription: Subscription;
+
   ngOnInit(): void {
-    this.route.params
+    this.routeSubscription = this.route.params
       .pipe(map(params => {
         const clawMachineId: string = params["id"];
 
@@ -29,5 +31,9 @@ export class SettingsPlushesComponent implements OnInit {
         next: clawMachineName => this.clawMachineName = clawMachineName,
         error: error => console.error("error when getting param id on SettingsPlushesComponent or getting ClawMachineName: ", error)
       });
+  }
+
+  ngOnDestroy() {
+    this.routeSubscription.unsubscribe();
   }
 }

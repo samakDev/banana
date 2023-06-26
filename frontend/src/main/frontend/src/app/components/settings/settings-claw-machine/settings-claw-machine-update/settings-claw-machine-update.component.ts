@@ -1,30 +1,43 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {ClawMachineService} from "../../../../services/claw.machine.service";
 import {ClawMachineModel} from "../../../../models/claw.machine.model";
 import {ClawMachineEvent} from 'dto/target/ts/message_pb';
 import {HttpBananaClawMachineSenderService} from "../../../../services/http-banana-claw-machine-sender.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-settings-claw-machine-update',
   templateUrl: './settings-claw-machine-update.component.html',
   styleUrls: ['./settings-claw-machine-update.component.css']
 })
-export class SettingsClawMachineUpdateComponent {
+export class SettingsClawMachineUpdateComponent implements OnDestroy {
   clawMachines: ClawMachineModel[] = [];
   currentClawMachineIdEditing: string;
-  responseSuccess: Boolean = undefined;
-  responseText: String;
+  responseSuccess: boolean = undefined;
+  responseText: string;
+
+  private clawMachineSubscription: Subscription;
+  private updateCmdSubscription: Subscription;
+  private deleteCmdSubscription: Subscription;
 
   constructor(private clawMachineService: ClawMachineService, private senderService: HttpBananaClawMachineSenderService) {
-    this.listenClawMachineService();
-  }
-
-  private listenClawMachineService() {
-    this.clawMachineService.getClawMachineEvents()
+    this.clawMachineSubscription = this.clawMachineService.getClawMachineEvents()
       .subscribe({
         next: this.clawMachineEventListener(),
         error: e => console.log('e : ', e)
-      })
+      });
+  }
+
+  ngOnDestroy() {
+    this.clawMachineSubscription.unsubscribe();
+
+    if (this.updateCmdSubscription !== undefined) {
+      this.updateCmdSubscription.unsubscribe();
+    }
+
+    if (this.deleteCmdSubscription !== undefined) {
+      this.deleteCmdSubscription.unsubscribe();
+    }
   }
 
   private clawMachineEventListener() {
@@ -96,9 +109,8 @@ export class SettingsClawMachineUpdateComponent {
   }
 
   sendUpdateClawMachine(clawMachineEdited: ClawMachineModel) {
-    console.log('to send clawMachineEdited : ', clawMachineEdited);
     this.responseSuccess = undefined;
-    this.senderService.sendUpdateClawMachineCmd(clawMachineEdited.id, clawMachineEdited)
+    this.updateCmdSubscription = this.senderService.sendUpdateClawMachineCmd(clawMachineEdited.id, clawMachineEdited)
       .subscribe({
         next: any => {
           this.responseSuccess = true;
@@ -109,12 +121,12 @@ export class SettingsClawMachineUpdateComponent {
           this.responseText = "settings-claw-machine-update_updated-error"
           console.error("can't update", e);
         }
-      })
+      });
   }
 
   sendDeleteClawMachine(clawMachineId: string) {
     this.responseSuccess = undefined;
-    this.senderService.sendDeleteCmd(clawMachineId)
+    this.deleteCmdSubscription = this.senderService.sendDeleteCmd(clawMachineId)
       .subscribe({
         next: any => {
           console.log("delete done");
@@ -126,8 +138,6 @@ export class SettingsClawMachineUpdateComponent {
           this.responseText = "settings-claw-machine-update_deleted-error"
           console.error("can't delete" + clawMachineId + " error :", e);
         }
-      })
+      });
   }
-
-  protected readonly undefined = undefined;
 }

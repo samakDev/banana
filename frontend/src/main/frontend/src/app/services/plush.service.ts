@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {concat, defer, filter, map, Observable, of, share} from 'rxjs';
+import {Injectable, OnDestroy} from '@angular/core';
+import {concat, defer, filter, map, Observable, of, share, Subscription} from 'rxjs';
 import {RxStompService} from "./stomp/rx-stomp.service";
 import {Constants} from "../constants";
 import {RxStompServiceFactory} from "./stomp/rx-stomp-service-factory";
@@ -9,10 +9,11 @@ import {CurrentStatePlushEvent, PlushEvent} from 'dto/target/ts/message_pb';
 import {Plush, PlushIdentifier} from 'dto/target/ts/model_pb';
 
 @Injectable()
-export class PlushService {
+export class PlushService implements OnDestroy {
   private plushes: Plush[] = [];
   private plushEventObs: Observable<PlushEvent>;
   private stompService: RxStompService;
+  private plushEventSubscription: Subscription;
 
   constructor(rxStompServiceFactory: RxStompServiceFactory, private senderService: HttpBananaPlushSenderService) {
     this.stompService = rxStompServiceFactory.getRxStompService()
@@ -20,12 +21,16 @@ export class PlushService {
     this.initListening();
   }
 
+  ngOnDestroy() {
+    this.plushEventSubscription.unsubscribe();
+  }
+
   private initListening(): void {
     this.plushEventObs = this.stompService.watch(Constants.QUEUE_BROKER_PLUSH_NAME)
       .pipe(map(message => <PlushEvent>PlushEvent.deserializeBinary(message.binaryBody)))
       .pipe(share());
 
-    this.plushEventObs.subscribe({
+    this.plushEventSubscription = this.plushEventObs.subscribe({
       next: (plushEvent) => this.plushEventsHandler(plushEvent),
       error: (e) => console.error(e)
     });
@@ -78,7 +83,11 @@ export class PlushService {
       ? plush.getOrder()
       : undefined;
 
-    return new PlushModel(plush.getId(), plush.getClawMachineId(), plush.getName(), plushOrder, plush.getImageAbsolutePath());
+    const lockerName = plush.hasPlushLocker()
+      ? plush.getPlushLocker().getName()
+      : undefined;
+
+    return new PlushModel(plush.getId(), plush.getClawMachineId(), plush.getName(), plushOrder, plush.getImageAbsolutePath(), undefined, lockerName);
   }
 
   public getPlusheEventInit(clawMachineId: string): Observable<PlushEvent> {
@@ -117,8 +126,22 @@ export class PlushService {
     return this.senderService.sendDeletePlushCmd(clawMachineId, plushId);
   }
 
-  public importPlush(clawMachineId: string, importFile: File, homeDirectory: string): Observable<Boolean> {
+  public importPlush(clawMachineId: string, importFile: File, homeDirectory: string): Observable<boolean> {
     return this.senderService.importPlushCmd(clawMachineId, importFile, homeDirectory)
-      .pipe(map(response => <Boolean>response));
+      .pipe(map(response => <boolean>response));
+  }
+
+  public lock(plushModel: PlushModel, lockerName: string): Observable<boolean> {
+    return this.senderService.sendLockCmd(plushModel.clawMachineId, plushModel.id, lockerName)
+      .pipe(map(response => <boolean>response));
+  }
+
+  public unLock(plushModel: PlushModel, lockerName: string): Observable<boolean> {
+    return this.senderService.unLock(plushModel.clawMachineId, plushModel.id, lockerName)
+      .pipe(map(response => <boolean>response));
+  }
+
+  public getImage(clawMachineId: string, plushId: string) {
+    return this.senderService.getImage(clawMachineId, plushId)
   }
 }

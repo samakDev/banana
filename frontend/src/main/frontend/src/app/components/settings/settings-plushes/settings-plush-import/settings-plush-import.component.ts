@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PlushService} from "../../../../services/plush.service";
-import {map} from "rxjs";
+import {map, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
@@ -8,19 +8,22 @@ import {ActivatedRoute} from "@angular/router";
   templateUrl: './settings-plush-import.component.html',
   styleUrls: ['./settings-plush-import.component.css']
 })
-export class SettingsPlushImportComponent implements OnInit {
+export class SettingsPlushImportComponent implements OnInit, OnDestroy {
   responseSuccess: boolean;
   responseText: string;
   homeDirectory: string;
 
   private importFile: File;
   private clawMachineId: string;
+  private paramSubscription: Subscription;
+  private importPlushSubscription: Subscription;
 
   constructor(private route: ActivatedRoute, private plushService: PlushService) {
   }
 
+
   ngOnInit(): void {
-    this.route.parent.params
+    this.paramSubscription = this.route.parent.params
       .pipe(map(params => {
         const clawMachineId: string = params["id"];
 
@@ -32,12 +35,20 @@ export class SettingsPlushImportComponent implements OnInit {
       });
   }
 
+  ngOnDestroy() {
+    this.paramSubscription.unsubscribe();
+
+    if (this.importPlushSubscription !== undefined) {
+      this.importPlushSubscription.unsubscribe();
+    }
+  }
+
   public selectedFile(event) {
     this.importFile = event.target.files[0]
   }
 
   public onSubmit(): void {
-    this.plushService.importPlush(this.clawMachineId, this.importFile, this.homeDirectory)
+    this.importPlushSubscription = this.plushService.importPlush(this.clawMachineId, this.importFile, this.homeDirectory)
       .subscribe({
         next: response => {
           this.responseSuccess = true;
@@ -48,6 +59,6 @@ export class SettingsPlushImportComponent implements OnInit {
           this.responseText = "settings-plush-import_import-error"
           console.error('error while sending post request : ', e);
         }
-      })
+      });
   }
 }

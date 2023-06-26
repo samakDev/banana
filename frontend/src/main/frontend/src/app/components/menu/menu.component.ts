@@ -1,7 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ContextService} from '../../services/context.service';
-import {distinctUntilChanged, filter} from "rxjs";
-import {NameService} from "../../services/name.service";
+import {distinctUntilChanged, filter, Subscription} from "rxjs";
 import {ClawMachineService} from "../../services/claw.machine.service";
 import {ClawMachineModel} from "../../models/claw.machine.model";
 import {ClawMachineEvent} from 'dto/target/ts/message_pb';
@@ -10,18 +9,20 @@ import {ClawMachineEvent} from 'dto/target/ts/message_pb';
   selector: 'app-menu',
   templateUrl: './menu.component.html'
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
   isCollapsed: boolean = false;
   isFullScreen: boolean = false;
 
-  memberName: string;
   clawMachines: ClawMachineModel[] = [];
 
-  constructor(private contextService: ContextService, private nameService: NameService, private clawMachineService: ClawMachineService) {
+  private fullScreenSubscription: Subscription;
+  private clawEventSubscription: Subscription;
+
+  constructor(private contextService: ContextService, private clawMachineService: ClawMachineService) {
   }
 
   ngOnInit() {
-    this.contextService.getFullScreenMode()
+    this.fullScreenSubscription = this.contextService.getFullScreenMode()
       .pipe(filter(value => !(value === null || value === undefined)))
       .pipe(distinctUntilChanged())
       .subscribe({
@@ -29,26 +30,16 @@ export class MenuComponent implements OnInit {
         error: (e) => console.error(e)
       });
 
-    this.listenMemberName();
-    this.listenClawMachineService();
-  }
-
-  private listenMemberName() {
-    this.nameService.getNameObs()
-      .pipe(distinctUntilChanged())
-      .pipe(filter(value => this.memberName !== value))
-      .subscribe({
-        next: newName => this.memberName = newName,
-        error: e => console.error("error while getting name: ", e)
-      })
-  }
-
-  private listenClawMachineService() {
-    this.clawMachineService.getClawMachineEvents()
+    this.clawEventSubscription = this.clawMachineService.getClawMachineEvents()
       .subscribe({
         next: this.clawMachineEventListener(),
         error: e => console.log('e : ', e)
-      })
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.fullScreenSubscription.unsubscribe();
+    this.clawEventSubscription.unsubscribe();
   }
 
   private clawMachineEventListener() {
@@ -106,9 +97,4 @@ export class MenuComponent implements OnInit {
       this.clawMachines.splice(index, 1);
     }
   }
-
-  onMemberNameChange(): void {
-    this.nameService.setNewName(this.memberName);
-  }
-
 }

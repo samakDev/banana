@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {PlushService} from "../../../../services/plush.service";
-import {concatMap, interval, map} from "rxjs";
+import {interval, map, Subscription, switchMap, take} from "rxjs";
 import {PlushModel} from "../../../../models/plush.model";
 import {CurrentStatePlushEvent, PlushEvent} from 'dto/target/ts/message_pb';
 import {Plush} from 'dto/target/ts/model_pb';
@@ -11,7 +11,7 @@ import {Plush} from 'dto/target/ts/model_pb';
   templateUrl: './settings-plush-update.component.html',
   styleUrls: ['./settings-plush-update.component.css']
 })
-export class SettingsPlushUpdateComponent implements OnInit {
+export class SettingsPlushUpdateComponent implements OnInit, OnDestroy {
   responseSuccess: boolean = undefined;
   responseText = undefined;
 
@@ -19,51 +19,27 @@ export class SettingsPlushUpdateComponent implements OnInit {
   currentPlushIdEditing: string = null;
   clawMachineId: string;
 
+  private paramSubscription: Subscription;
+  private updatePlushSubscription: Subscription;
+  private deletePlushSubscription: Subscription;
+
   constructor(private route: ActivatedRoute, private plushService: PlushService) {
   }
 
-  isEditingMode(plushId: string): boolean {
-    return this.currentPlushIdEditing === plushId;
-  }
+  ngOnDestroy() {
+    this.paramSubscription.unsubscribe();
 
-  setInEditionMode(plushId: string): void {
-    this.currentPlushIdEditing = this.isEditingMode(plushId)
-      ? undefined
-      : plushId;
-  }
+    if (this.updatePlushSubscription !== undefined) {
+      this.updatePlushSubscription.unsubscribe();
+    }
 
-  sendUpdatePlush(plushToSend: PlushModel): void {
-    this.plushService.updatePlush(plushToSend)
-      .subscribe({
-        next: any => {
-          this.responseSuccess = true;
-          this.responseText = "settings-plush-update_updated-success"
-        },
-        error: e => {
-          this.responseSuccess = false;
-          this.responseText = "settings-plush-update_updated-error"
-          console.error('error while sending post request : ', e);
-        }
-      });
-  }
-
-  sendDeletePlush(plushId: string): void {
-    this.plushService.deletePlush(this.clawMachineId, plushId)
-      .subscribe({
-        next: any => {
-          this.responseSuccess = true;
-          this.responseText = "settings-plush-update_deleted-success"
-        },
-        error: e => {
-          this.responseSuccess = false;
-          this.responseText = "settings-plush-update_deleted-error"
-          console.error('error while sending post request : ', e);
-        }
-      });
+    if (this.deletePlushSubscription !== undefined) {
+      this.deletePlushSubscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
-    this.route.parent.params
+    this.paramSubscription = this.route.parent.params
       .pipe(map(params => {
         const clawMachineId: string = params["id"];
 
@@ -75,9 +51,10 @@ export class SettingsPlushUpdateComponent implements OnInit {
 
         return clawMachineId;
       }))
-      .pipe(concatMap(clawMachineId => interval(200)
+      .pipe(switchMap(clawMachineId => interval(200)
+        .pipe(take(1))
         .pipe(map(any => clawMachineId))))
-      .pipe(concatMap(clawMachineId => this.plushService.getPlusheEventInit(clawMachineId)))
+      .pipe(switchMap(clawMachineId => this.plushService.getPlusheEventInit(clawMachineId)))
       .subscribe({
         next: plushEvent => this.plushEventsHandler(plushEvent),
         error: error => console.error("error when getting param id on ClawMachineComponent", error)
@@ -125,5 +102,45 @@ export class SettingsPlushUpdateComponent implements OnInit {
     if (index > -1) {
       this.plushes.splice(index, 1);
     }
+  }
+
+  isEditingMode(plushId: string): boolean {
+    return this.currentPlushIdEditing === plushId;
+  }
+
+  setInEditionMode(plushId: string): void {
+    this.currentPlushIdEditing = this.isEditingMode(plushId)
+      ? undefined
+      : plushId;
+  }
+
+  sendUpdatePlush(plushToSend: PlushModel): void {
+    this.updatePlushSubscription = this.plushService.updatePlush(plushToSend)
+      .subscribe({
+        next: any => {
+          this.responseSuccess = true;
+          this.responseText = "settings-plush-update_updated-success"
+        },
+        error: e => {
+          this.responseSuccess = false;
+          this.responseText = "settings-plush-update_updated-error"
+          console.error('error while sending post request : ', e);
+        }
+      });
+  }
+
+  sendDeletePlush(plushId: string): void {
+    this.deletePlushSubscription = this.plushService.deletePlush(this.clawMachineId, plushId)
+      .subscribe({
+        next: any => {
+          this.responseSuccess = true;
+          this.responseText = "settings-plush-update_deleted-success"
+        },
+        error: e => {
+          this.responseSuccess = false;
+          this.responseText = "settings-plush-update_deleted-error"
+          console.error('error while sending post request : ', e);
+        }
+      });
   }
 }

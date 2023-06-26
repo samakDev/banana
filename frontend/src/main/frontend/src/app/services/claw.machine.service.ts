@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {HttpBananaClawMachineSenderService} from "./http-banana-claw-machine-sender.service";
-import {concat, from, map, Observable, share} from "rxjs";
+import {concat, from, map, Observable, share, Subscription} from "rxjs";
 import {RxStompServiceFactory} from "./stomp/rx-stomp-service-factory";
 import {RxStompService} from "./stomp/rx-stomp.service";
 import {Constants} from "../constants";
@@ -9,13 +9,21 @@ import {ClawMachineEvent} from 'dto/target/ts/message_pb';
 import {ClawMachine, ClawMachineIdentifier} from 'dto/target/ts/model_pb';
 
 @Injectable()
-export class ClawMachineService {
+export class ClawMachineService implements OnDestroy {
   private clawMachineEventObs: Observable<ClawMachineEvent> = null;
   private stompService: RxStompService;
   private clawMachinesEvents: ClawMachineEvent[] = [];
 
+  private clawEventSubscription: Subscription;
+
   constructor(private httpBananaSenderService: HttpBananaClawMachineSenderService, rxStompServiceFactory: RxStompServiceFactory) {
     this.stompService = rxStompServiceFactory.getRxStompService()
+  }
+
+  ngOnDestroy() {
+    if (this.clawEventSubscription !== undefined) {
+      this.clawEventSubscription.unsubscribe();
+    }
   }
 
   public sendCreateClawMachineCmd(clawMachine: ClawMachineModel): Observable<ClawMachineIdentifier> {
@@ -29,7 +37,7 @@ export class ClawMachineService {
         .pipe(map(message => ClawMachineEvent.deserializeBinary(message.binaryBody)))
         .pipe(share())
 
-      this.clawMachineEventObs.subscribe({
+      this.clawEventSubscription = this.clawMachineEventObs.subscribe({
         next: (clawMachineEvent) => this.addOrUpdate(clawMachineEvent),
         error: (e) => console.error(e)
       });

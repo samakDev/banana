@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Plush, PlushImport, PlushUpdater} from 'dto/target/ts/model_pb';
+import {Plush, PlushImport, PlushLocker, PlushUnLocker, PlushUpdater} from 'dto/target/ts/model_pb';
 import {PlushModel} from "../models/plush.model";
 
 @Injectable()
@@ -16,6 +16,9 @@ export class HttpBananaPlushSenderService {
   private readonly UPDATE_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}`;
   private readonly DELETE_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}`
   private readonly IMPORT_PLUSH_ENDPOINT_FN = (clawMachineId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/import`
+  private readonly LOCK_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}/lock`;
+  private readonly UNLOCK_PLUSH_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}/unlock`;
+  private readonly GET_PLUSH_IMG_ENDPOINT_FN = (clawMachineId: string, plushId: string) => this.PLUSH_BASE_ENDPOINT_FN(clawMachineId) + `/${plushId}`;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -88,6 +91,47 @@ export class HttpBananaPlushSenderService {
     });
 
     return this.httpClient.post(url, formData, {headers: headers})
+  }
+
+  public sendLockCmd(clawMachineId: string, plushId: string, memberName: string): Observable<Object> {
+    const plushLocker: PlushLocker.AsObject = {
+      name: memberName
+    };
+
+    const url = this.LOCK_PLUSH_ENDPOINT_FN(clawMachineId, plushId);
+
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json"
+    });
+
+    return this.httpClient.post(url, this.jsonifyMessage(plushLocker), {headers: headers})
+  }
+
+  public unLock(clawMachineId: string, plushId: string, memberName: string): Observable<Object> {
+    const plushUnLocker: PlushUnLocker.AsObject = {
+      name: memberName
+    };
+
+    const url = this.UNLOCK_PLUSH_ENDPOINT_FN(clawMachineId, plushId);
+
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json"
+    });
+
+    return this.httpClient.post(url, this.jsonifyMessage(plushUnLocker), {headers: headers})
+  }
+
+  public getImage(clawMachineId: string, plushId: string): Observable<Blob> {
+    const url = this.GET_PLUSH_IMG_ENDPOINT_FN(clawMachineId, plushId)
+
+    const headers = new HttpHeaders({
+      "Accept": "application/octet-stream"
+    });
+
+    return this.httpClient.get(url, {
+      headers: headers,
+      responseType: 'blob'
+    });
   }
 
   private jsonifyMessage(protoMessage: any): string {

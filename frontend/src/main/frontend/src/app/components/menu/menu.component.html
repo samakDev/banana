@@ -16,16 +16,6 @@
   <div class="collapse navbar-collapse"
        [ngbCollapse]="isCollapsed">
 
-    <div>
-      <div class="input-group">
-        <span class="input-group-text" translate="yourname"></span>
-        <input type="text"
-               class="form-control"
-               [(ngModel)]="memberName"
-               (ngModelChange)="onMemberNameChange()">
-      </div>
-    </div>
-
     <ul class="navbar-nav w-100">
       <li class="nav-item" *ngFor="let clawMachine of clawMachines">
         <a class="nav-link"
