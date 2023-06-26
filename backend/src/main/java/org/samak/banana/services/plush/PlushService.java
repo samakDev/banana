@@ -10,8 +10,11 @@ import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.message.CreatedPlushEvent;
 import org.samak.banana.dto.message.CurrentStatePlushEvent;
 import org.samak.banana.dto.message.DeletedPlushEvent;
+import org.samak.banana.dto.message.LockPlushEvent;
 import org.samak.banana.dto.message.PlushEvent;
+import org.samak.banana.dto.message.UnLockPlushEvent;
 import org.samak.banana.dto.message.UpdatedPlushEvent;
+import org.samak.banana.dto.model.Plush;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.samak.banana.entity.PlushLockerEntity;
@@ -152,7 +155,7 @@ public class PlushService implements IPlushService {
     }
 
     @Override
-    public boolean take(final UUID plushId, final PlushEntity plushEntity, final String lockerName, @Nullable final OffsetDateTime lockDate) {
+    public boolean lock(final UUID plushId, final PlushEntity plushEntity, final String lockerName, @Nullable final OffsetDateTime lockDate) {
         final PlushLockerEntity entity = new PlushLockerEntity();
         entity.setName(lockerName);
         entity.setPlush(plushEntity);
@@ -163,6 +166,14 @@ public class PlushService implements IPlushService {
 
         plushEntity.setState(PlushStateEnumEntity.TAKEN);
         plushRepository.save(plushEntity);
+
+        final PlushEvent event = PlushEvent.newBuilder()
+                .setLockPlushEvent(LockPlushEvent.newBuilder()
+                        .setPlushId(plushEntity.getId().toString())
+                        .setPlushLocker(PLUSH_MAPPER.convertPlushLockerEntityToDto(entity)))
+                .build();
+
+        plushEventSubject.onNext(event);
 
         return true;
     }
@@ -202,6 +213,13 @@ public class PlushService implements IPlushService {
 
         plushEntity.setState(PlushStateEnumEntity.FREE);
         plushRepository.save(plushEntity);
+
+        final PlushEvent event = PlushEvent.newBuilder()
+                .setUnLockPlushEvent(UnLockPlushEvent.newBuilder()
+                        .setPlushId(plushEntity.getId().toString()))
+                .build();
+
+        plushEventSubject.onNext(event);
     }
 
     @Override
@@ -275,9 +293,11 @@ public class PlushService implements IPlushService {
 
     private Observable<PlushEvent> initState() {
         return Observable.fromCallable(plushRepository::findAll)
-                .map(clawMachineEntities -> StreamSupport.stream(clawMachineEntities.spliterator(), false)
-                        .map(PLUSH_MAPPER::convertPlushEntityToDto)
-                        .toList())
+                .map(plushEntities -> {
+                    return StreamSupport.stream(plushEntities.spliterator(), false)
+                            .map(this::converter)
+                            .toList();
+                })
                 .map(plushes -> PlushEvent.newBuilder()
                         .setCurrentStatePlushEvent(CurrentStatePlushEvent.newBuilder()
                                 .addAllPlushes(plushes))
@@ -285,4 +305,16 @@ public class PlushService implements IPlushService {
                 .subscribeOn(Schedulers.io());
     }
 
+    @Override
+    public Plush converter(final PlushEntity plush) {
+        if (PlushStateEnumEntity.FREE == plush.getState()) {
+            return PLUSH_MAPPER.convertPlushEntityToDto(plush);
+        } else {
+            final Optional<PlushLockerEntity> plushLockerEntityOpt = plushLockerRepository.findAllByPlushAndUnlockDate(plush, null);
+
+            return plushLockerEntityOpt
+                    .map(lockerEntity -> PLUSH_MAPPER.convertPlushEntityToDto(plush, lockerEntity))
+                    .orElseGet(() -> PLUSH_MAPPER.convertPlushEntityToDto(plush));
+        }
+    }
 }

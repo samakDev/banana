@@ -3,6 +3,7 @@ package org.samak.banana.services.plush;
 
 import io.reactivex.Observable;
 import org.samak.banana.dto.message.PlushEvent;
+import org.samak.banana.dto.model.Plush;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +31,7 @@ public interface IPlushService {
 
     InputStream getPlushImg(PlushEntity plushEntity) throws FileNotFoundException;
 
-    boolean take(UUID plushId, final PlushEntity plushEntity, String lockerName, final OffsetDateTime lockDate);
+    boolean lock(UUID plushId, final PlushEntity plushEntity, String lockerName, final OffsetDateTime lockDate);
 
     boolean hasRightToUnlock(final PlushEntity plushEntity, final String name);
 
@@ -39,4 +40,6 @@ public interface IPlushService {
     void delete(UUID plushId) throws IOException;
 
     boolean importBananaConfig(final ClawMachineEntity clawMachineEntity, MultipartFile jsonFile, @Nullable final String homeDirectory) throws IOException;
+
+    Plush converter(PlushEntity plush);
 }

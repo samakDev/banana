@@ -2,7 +2,6 @@ package org.samak.banana.controllers;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.mapstruct.factory.Mappers;
 import org.samak.banana.dto.model.Plush;
 import org.samak.banana.dto.model.PlushIdentifier;
 import org.samak.banana.dto.model.PlushImport;
@@ -12,13 +11,11 @@ import org.samak.banana.dto.model.PlushUpdater;
 import org.samak.banana.dto.model.Plushes;
 import org.samak.banana.entity.ClawMachineEntity;
 import org.samak.banana.entity.PlushEntity;
-import org.samak.banana.mapper.PlushMapper;
 import org.samak.banana.services.clawmachine.IClawMachineService;
 import org.samak.banana.services.plush.IPlushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,7 +50,6 @@ import java.util.UUID;
 @RequestMapping("/api/claw-machine/{claw-machine-id}/plushes")
 public class PlushController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlushController.class);
-    private static final PlushMapper PLUSH_MAPPER = Mappers.getMapper(PlushMapper.class);
     private static final List<String> IMAGE_CONTENT_TYPE_ALLOWED = Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
 
     private final IClawMachineService clawMachineService;
@@ -122,7 +118,7 @@ public class PlushController {
 
         final PlushEntity entity = plushService.updatePlush(originalPlush, name, order, plushImg);
 
-        return ResponseEntity.ok(PLUSH_MAPPER.convertPlushEntityToDto(entity));
+        return ResponseEntity.ok(plushService.converter(entity));
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -137,7 +133,7 @@ public class PlushController {
 
         final List<Plush> plushList = plushService.getAll(clawMachineOpt.get())
                 .stream()
-                .map(PLUSH_MAPPER::convertPlushEntityToDto)
+                .map(plushService::converter)
                 .filter(Objects::nonNull)
                 .toList();
 
@@ -151,7 +147,7 @@ public class PlushController {
     @GetMapping(value = "{id}", produces = MediaType.MULTIPART_MIXED_VALUE)
     public ResponseEntity<MultiValueMap<String, Object>> getPlush(@PathVariable("claw-machine-id") final UUID clawMachineId,
                                                                   @PathVariable("id") final UUID plushId) {
-        LOGGER.info("PlushController.getAll for clawMachine {}", clawMachineId);
+        LOGGER.info("PlushController.get for clawMachine {} for plush {}", clawMachineId, plushId);
 
         final PlushEntity plushEntity = checkRequestValidity(clawMachineId, plushId);
 
@@ -167,6 +163,27 @@ public class PlushController {
         values.add("metadata", metadataBody(plushEntity));
 
         return ResponseEntity.ok(values);
+    }
+
+    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<InputStreamResource> getPlushImg(@PathVariable("claw-machine-id") final UUID clawMachineId,
+                                                           @PathVariable("id") final UUID plushId) {
+        LOGGER.info("PlushController.get as octect stream for clawMachine {} for plush {}", clawMachineId, plushId);
+
+        final PlushEntity plushEntity = checkRequestValidity(clawMachineId, plushId);
+
+        final InputStream plushImg;
+        try {
+            plushImg = plushService.getPlushImg(plushEntity);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("impossible to get the file error: ", e);
+        }
+
+        final HttpEntity<InputStreamResource> httpEntity = imageBody(plushEntity, plushImg);
+
+        return ResponseEntity.ok()
+                .contentType(httpEntity.getHeaders().getContentType())
+                .body(httpEntity.getBody());
     }
 
     private PlushEntity checkRequestValidity(final UUID clawMachineId, final UUID plushId) {
@@ -185,7 +202,7 @@ public class PlushController {
         return plushEntityOpt.get();
     }
 
-    private HttpEntity<Resource> imageBody(final PlushEntity plushEntity, final InputStream plushImg) {
+    private HttpEntity<InputStreamResource> imageBody(final PlushEntity plushEntity, final InputStream plushImg) {
         final String extension = FilenameUtils.getExtension(plushEntity.getImageAbsolutePath());
 
         final MediaType contentType = switch (extension.toLowerCase()) {
@@ -205,7 +222,7 @@ public class PlushController {
         final HttpHeaders metadataHeader = new HttpHeaders();
         metadataHeader.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-        final Plush plush = PLUSH_MAPPER.convertPlushEntityToDto(plushEntity);
+        final Plush plush = plushService.converter(plushEntity);
 
         return new HttpEntity<>(plush.toByteArray(), metadataHeader);
     }
@@ -240,7 +257,7 @@ public class PlushController {
                 .orElse(null);
 
 
-        final boolean result = plushService.take(plushId, plushOpt.get(), plushLocker.getName(), lockDate);
+        final boolean result = plushService.lock(plushId, plushOpt.get(), plushLocker.getName(), lockDate);
 
         if (result) {
             return ResponseEntity.ok(result);
