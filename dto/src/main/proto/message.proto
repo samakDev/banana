@@ -37,6 +37,8 @@ message PlushEvent {
     CreatedPlushEvent createPlushEvent = 2;
     UpdatedPlushEvent updatedPlushEvent = 3;
     DeletedPlushEvent deletedPlushEvent = 4;
+    LockPlushEvent lockPlushEvent = 5;
+    UnLockPlushEvent unLockPlushEvent = 6;
   }
 }
 
@@ -53,5 +55,14 @@ message UpdatedPlushEvent {
 }
 
 message DeletedPlushEvent {
+  string plushId = 1;
+}
+
+message LockPlushEvent {
+  string plushId = 1;
+  org.samak.banana.dto.model.PlushLocker plushLocker = 2;
+}
+
+message UnLockPlushEvent {
   string plushId = 1;
 }

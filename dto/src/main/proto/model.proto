@@ -47,7 +47,7 @@ message PlushUpdater {
 
 message PlushLocker {
   string name = 1;
-  google.protobuf.Timestamp since = 2;
+  optional google.protobuf.Timestamp since = 2;
 }
 
 message PlushUnLocker {
